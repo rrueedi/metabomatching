@@ -1,0 +1,12 @@
+reference	smdb
+mode	peak
+variant	1c
+dsh	0.0200
+scoring	chisq
+decorr_lambda	1.0000
+n_show	8
+p_significant	1E-6
+description_x	rs72 in AGXT2
+cas_control_x_1	79-31-2
+cas_control_x_2	64-17-5
+cas_control_y_1	79-31-2
