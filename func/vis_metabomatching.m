@@ -1,6 +1,6 @@
 function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
-%dir_source=ps.param.dir_source;
+% dir_source=ps.param.dir_source;
 ts.howto = false;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
@@ -642,7 +642,7 @@ for jPseudo=1:length(ps.tag)
             end
         end
         
-        nnn = num2str(round(100*sh_label(i)));
+        nnn = num2str(round(100*sh_label(i)),'%03d');
         
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.5" font-size="8">',nnn(2),'</tspan>',...
@@ -728,8 +728,7 @@ for jPseudo=1:length(ps.tag)
     end
     % ----- markers for significant peaks
     for i=1:length(sh_label)
-        nnn = num2str(round(100*sh_label(i)));
-        
+        nnn = num2str(round(100*sh_label(i)),'%03d');        
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.6" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.6" font-size="8">',nnn(3),'</tspan>'],'legend');
