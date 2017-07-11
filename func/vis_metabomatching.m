@@ -34,7 +34,7 @@ fi = fopen(fn_parameters);
 pr = textscan(fi,'%s%s','delimiter','\t');
 fclose(fi);
 for j = 1:length(pr{1})
-    if ismember(pr{1}{j},numberFields)
+    if any(cell2mat(cellfun(@(x) strfind(pr{1}{j},x),numberFields,'uniformoutput',false)))
         ps.param.(pr{1}{j})=str2double(pr{2}{j});
     else
         ps.param.(pr{1}{j})=pr{2}{j};
@@ -92,7 +92,7 @@ if exist(fn_description,'file')
     nc = length(xx{1});    
     if nc == 3
         fi = fopen(fn_description);
-        pr = textscan(fi,'%s%s%s','delimiter',';');
+        pr = textscan(fi,'%s%s%s','delimiter','\t');
         fclose(fi);
         for i = 1:length(ps.tag)
             ix = find(strcmp(ps.tag{i},pr{1}));
@@ -250,6 +250,19 @@ end
 %% ##### ##### LOOPING OVER PSEUDOS ##### #####
 for jPseudo=1:length(ps.tag)
     param=ps.param;
+    tag_clean = ps.tag{jPseudo};
+    tag_clean = strrep(tag_clean,'.','_');
+    
+    % ----- find tag specific parameter settings
+    fds = fields(ps.param);
+    se = find(cellfun(@(x) isequal(x,1),strfind(fds,tag_clean)));
+    if ~isempty(se)
+        for i = 1:length(se)
+            fd_totreat = fds(se(i));
+            fd_specific = strrep(fd_totreat,[tag_clean,'_'],'');
+            param.(fd_specific{1})=param.(fd_totreat{1});
+        end
+    end
     param.description = ps.description{jPseudo};
     param.cas_ctrl = ps.cas_control{jPseudo};
     param.tag = ps.tag{jPseudo};
