@@ -247,6 +247,13 @@ elseif ps.param.decorr_lambda < 0.1
 elseif ps.param.decorr_lambda < 1.0
     pd.fg_set = [pd.fg_set;{'decorr',['&#x03BB; = ',num2str(ps.param.decorr_lambda,'%.2f')]}];
 end
+%       decorrelation requested, but no correlation file provided
+if isfield(ps.param,'correlation_missing') 
+  if ps.param.correlation_missing==1
+     pd.fg_set = [pd.fg_set;{'warning','correlation file'}];
+     pd.fg_set = [pd.fg_set;{'','missing'}];
+     end
+     end
 %% ##### ##### LOOPING OVER PSEUDOS ##### #####
 for jPseudo=1:length(ps.tag)
     param=ps.param;

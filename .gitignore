@@ -6,3 +6,5 @@ wd
 *.log
 *.toc
 *.out
+ps.*
+out
