@@ -1,6 +1,6 @@
 function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
-% dir_source=ps.param.dir_source;
+%dir_source=ps.param.dir_source;
 ts.howto = false;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
@@ -34,7 +34,7 @@ fi = fopen(fn_parameters);
 pr = textscan(fi,'%s%s','delimiter','\t');
 fclose(fi);
 for j = 1:length(pr{1})
-    if any(cell2mat(cellfun(@(x) strfind(pr{1}{j},x),numberFields,'uniformoutput',false)))
+    if ismember(pr{1}{j},numberFields)
         ps.param.(pr{1}{j})=str2double(pr{2}{j});
     else
         ps.param.(pr{1}{j})=pr{2}{j};
@@ -92,7 +92,7 @@ if exist(fn_description,'file')
     nc = length(xx{1});    
     if nc == 3
         fi = fopen(fn_description);
-        pr = textscan(fi,'%s%s%s','delimiter','\t');
+        pr = textscan(fi,'%s%s%s','delimiter',';');
         fclose(fi);
         for i = 1:length(ps.tag)
             ix = find(strcmp(ps.tag{i},pr{1}));
@@ -247,22 +247,16 @@ elseif ps.param.decorr_lambda < 0.1
 elseif ps.param.decorr_lambda < 1.0
     pd.fg_set = [pd.fg_set;{'decorr',['&#x03BB; = ',num2str(ps.param.decorr_lambda,'%.2f')]}];
 end
+%       decorrelation requested, but no correlation file provided
+if isfield(ps.param,'correlation_missing') 
+  if ps.param.correlation_missing==1
+     pd.fg_set = [pd.fg_set;{'warning','correlation file'}];
+     pd.fg_set = [pd.fg_set;{'','missing'}];
+     end
+     end
 %% ##### ##### LOOPING OVER PSEUDOS ##### #####
 for jPseudo=1:length(ps.tag)
     param=ps.param;
-    tag_clean = ps.tag{jPseudo};
-    tag_clean = strrep(tag_clean,'.','_');
-    
-    % ----- find tag specific parameter settings
-    fds = fields(ps.param);
-    se = find(cellfun(@(x) isequal(x,1),strfind(fds,tag_clean)));
-    if ~isempty(se)
-        for i = 1:length(se)
-            fd_totreat = fds(se(i));
-            fd_specific = strrep(fd_totreat,[tag_clean,'_'],'');
-            param.(fd_specific{1})=param.(fd_totreat{1});
-        end
-    end
     param.description = ps.description{jPseudo};
     param.cas_ctrl = ps.cas_control{jPseudo};
     param.tag = ps.tag{jPseudo};
@@ -655,7 +649,7 @@ for jPseudo=1:length(ps.tag)
             end
         end
         
-        nnn = num2str(round(100*sh_label(i)),'%03d');
+        nnn = num2str(round(100*sh_label(i)));
         
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.5" font-size="8">',nnn(2),'</tspan>',...
@@ -741,7 +735,8 @@ for jPseudo=1:length(ps.tag)
     end
     % ----- markers for significant peaks
     for i=1:length(sh_label)
-        nnn = num2str(round(100*sh_label(i)),'%03d');        
+        nnn = num2str(round(100*sh_label(i)));
+        
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.6" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.6" font-size="8">',nnn(3),'</tspan>'],'legend');
