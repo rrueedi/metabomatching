@@ -32,13 +32,24 @@ if strcmp(type,'slop')
         fi = fopen(fullfile(dir_source,fil(iFil).name));
         pr = textscan(fi,'%s%f%f%f','delimiter','\t');
         [~,reo] = unique(pr{4});
-        metdb.cas = pr{1}(reo);
-        metdb.sid = pr{4}(reo);
-        for iCas = 1:length(metdb.cas)
-            sl = find(strcmp(metdb.cas{iCas},pr{1}));
-            metdb.pos{iCas,1} = pr{2}(sl);
-            metdb.hnh{iCas,1} = pr{3}(sl);
+        smetdb.cas = pr{1}(reo);
+        smetdb.sid = pr{4}(reo);
+        for iCas = 1:length(smetdb.cas)
+            sl = find(strcmp(smetdb.cas{iCas},pr{1}));
+            smetdb.pos{iCas,1} = pr{2}(sl);
+            smetdb.hnh{iCas,1} = pr{3}(sl);
         end
+        ff = fieldnames(smetdb);
+        if iFil == 1
+            for jf = 1:length(ff)
+                metdb.(ff{jf})=smetdb.(ff{jf});
+            end
+            else
+                for jf = 1:length(ff)
+                metdb.(ff{jf})=[metdb.(ff{jf});smetdb.(ff{jf})];
+            end
+            end
+            
     end
     
 elseif strcmp(type,'slom')
