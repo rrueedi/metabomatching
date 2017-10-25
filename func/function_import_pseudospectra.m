@@ -1,43 +1,37 @@
 function ps=function_import_pseudospectra(ps)
 % FUNCTION_IMPORT_PSEUDOSPECTRA Read pseudospectrum files
 if exist(ps.param.dir_source,'dir')
-    fil=dir(fullfile(ps.param.dir_source,'*.pseudospectrum.tsv'));
-    if length(fil)>0
+    fn=dir(fullfile(ps.param.dir_source,'*.pseudospectrum.tsv'));
+    if ~isempty(fn)
         for f={'beta','se','p','tag'}
             if isfield(ps,f{1});
                 ps = rmfield(ps,f{1});
             end
         end
-        for i = 1:length(fil)
-            fi = fopen(fullfile(ps.param.dir_source,fil(i).name));
-            qq = textscan(fi,'%s',1,'delimiter','?');
-            qq = qq{1}{1};
-            fclose(fi);
-            nc = length(regexp(qq,'\s','split'));
-            fi = fopen(fullfile(ps.param.dir_source,fil(i).name));
-            lb = textscan(fi,repmat('%s',1,nc),1,'delimiter','\t');
-            pr = textscan(fi,repmat('%f',1,nc),'delimiter','\t');
-            fclose(fi);
-            if length(lb)==4
-                ps.tag{i,1} = strrep(fil(i).name,'.pseudospectrum.tsv','');
-                for i_field=1:length(lb)
-                    ps.(lb{i_field}{1})(:,i)=pr{i_field};
+        for i = 1:length(fn)
+            dsfni = fullfile(ps.param.dir_source,fn(i).name);            
+            ts = func_readtable(dsfni);
+            [ts.lb{:}]
+            if ~ismember('/',[ts.lb{:}])               
+                ps.tag{i,1} = strrep(fn(i).name,'.pseudospectrum.tsv','');
+                for i_field=1:length(ts.lb)
+                    ps.(ts.lb{i_field})(:,i)=ts.pr{i_field};
                 end
             else
                 ps.tag={};
-                ps.param.multi=fil(i).name;
-                for i_field = 1:length(lb)
-                    if strcmpi(lb{i_field}{1},'shift')
-                        ps.shift=pr{i_field};
+                ps.param.multi=fn(i).name;
+                for i_field = 1:length(ts.lb)
+                    if strcmpi(ts.lb{i_field},'shift')
+                        ps.shift=ts.pr{i_field};
                     else
-                        xx=regexp(lb{i_field}{1},'/','split');
+                        xx=regexp(ts.lb{i_field},'/','split');
                         if length(xx)==2
                             ix = find(strcmpi(ps.tag,xx{2}));
                             if isempty(ix)
                                 ix = length(ps.tag)+1;
                                 ps.tag{ix,1} = xx{2};
                             end
-                            ps.(xx{1})(:,ix)=pr{i_field};
+                            ps.(xx{1})(:,ix)=ts.pr{i_field};
                         end
                     end
                 end
@@ -46,11 +40,9 @@ if exist(ps.param.dir_source,'dir')
                 ps.beta(:,se_dump)=[];
                 ps.se(:,se_dump)=[];
                 ps.p(:,se_dump)=[];
-                
             end
         end
         ps.shift = ps.shift(:,1);
-        %ps.param.dir_source = dir_source;
         %
         if ismember(ps.param.variant,{'pm','pm1c','pm2c'})
             F=fieldnames(ps);
