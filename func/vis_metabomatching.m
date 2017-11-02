@@ -92,7 +92,7 @@ if exist(fn_description,'file')
     nc = length(xx{1});    
     if nc == 3
         fi = fopen(fn_description);
-        pr = textscan(fi,'%s%s%s','delimiter',';');
+        pr = textscan(fi,'%s%s%s','delimiter','\t');
         fclose(fi);
         for i = 1:length(ps.tag)
             ix = find(strcmp(ps.tag{i},pr{1}));
@@ -642,7 +642,6 @@ for jPseudo=1:length(ps.tag)
             end
         end
         nnn = num2str(round(100*sh_label(i)),'%03d');
-        fprintf('%10s %s\n',param.tag,nnn);
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.5" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.5" font-size="8">',nnn(3),'</tspan>'],'legend');
