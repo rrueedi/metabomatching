@@ -454,6 +454,13 @@ for jPseudo=1:length(ps.tag)
     pd.d_spctr_sp = 5;
     pd.dl_grid = 0.5;
     pd.c_grid = colhex.gray.middBrewer;
+    pd.c_mark = 'white';
+    if isfield(ps.param,'mark')
+        switch ps.param.mark
+            case 'gray'
+                pd.c_mark = colhex.gray.middBrewer;
+        end
+    end
     pd.dl_pseudo = 0.75;
     if ts.wide
         pd.size = [800,700];
@@ -727,7 +734,6 @@ for jPseudo=1:length(ps.tag)
     % ----- markers for significant peaks
     for i=1:length(sh_label)
         nnn = num2str(round(100*sh_label(i)),'%03d');
-        
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.6" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.6" font-size="8">',nnn(3),'</tspan>'],'legend');
@@ -797,7 +803,7 @@ for jPseudo=1:length(ps.tag)
                 pseudo.x(Q)-p2(j)<0);
             if ~isempty(seTag)
                 for k=1:length(seTag)
-                    svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],'#ffffff',pd.dl_pseudo);
+                    svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pd.c_mark,pd.dl_pseudo);
                 end
             end
         end
