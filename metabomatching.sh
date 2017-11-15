@@ -13,6 +13,7 @@ DEBUG=0
 DR_WORK=
 IF_PSS=
 IF_PAR=
+IF_COR=
 OF_SCO=
 OF_PDF=
 
@@ -25,8 +26,9 @@ function print_help {
 	echo "   -g, --debug              Debug mode."
 	echo "   -h, --help               Print this help message."
 	echo "   -i, --input-file         Set input file."
-	echo "   -s, --output-score-file  Set output score file."
-	echo "   -S, --output-svg-file    Set output SVG file."
+	echo "   -c, --correlation-file   Set correlation file."
+	echo "   -s, --output-score-file  Set score output file."
+	echo "   -S, --output-svg-file    Set SVG output file."
 }
 # Error {{{1
 # ==========
@@ -71,6 +73,7 @@ function read_args {
 			-g|--debug)                  DEBUG=$((DEBUG + 1)) ;;
 			-h|--help)                   print_help ; exit 0 ;;
 			-i|--input-file)             IF_PSS=$(get_opt_val $1 $2) ; shift_count=2 ;;
+			-c|--correlation-file)       IF_COR="$2" ; shift_count=2 ;;
 			-p|--input-file-parameters)  IF_PAR=$(get_opt_val $1 $2) ; shift_count=2 ;;
 			-s|--output-file-scores)     OF_SCO=$(get_opt_val $1 $2) ; shift_count=2 ;;
 			-S|--output-file-pdf)        OF_PDF=$(get_opt_val $1 $2) ; shift_count=2 ;;
@@ -108,6 +111,8 @@ function read_args {
 
 read_args "$@"
 
+echo "metabomatching release/0.1.1"
+
 # Set working directory
 if [ -n "$IF_PSS" ] ; then
 	DR_WORK=wd
@@ -117,6 +122,9 @@ if [ -n "$IF_PSS" ] ; then
 fi
 if [ -n "$IF_PAR" ] ; then
 	cp $IF_PAR $DR_WORK/ps.study/parameters.in.tsv
+fi
+if [ -n "$IF_COR" ] ; then
+	cp $IF_COR $DR_WORK/ps.study/correlation.csv
 fi
 # Execute
 cd "$DR_WORK"
