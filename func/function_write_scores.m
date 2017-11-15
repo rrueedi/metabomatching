@@ -4,7 +4,11 @@ function function_write_scores(ps)
 if isfield(ps.param,'multi')
     fn = fullfile(ps.param.dir_source,strrep(ps.param.multi,'pseudospectrum','scores'));
     fi = fopen(fn,'w');
-    fprintf(fi,'cas\tid');
+    if ismember(ps.param.variant,{'2c','pm2c'})
+        fprintf(fi,'cas\tid\tcas\tid');
+    else
+        fprintf(fi,'cas\tid');
+    end
     for i = 1:size(ps.score,2)
         fprintf(fi,'\tscore/%s',ps.tag{i});
     end
