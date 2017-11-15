@@ -11,7 +11,6 @@ if exist(ps.param.dir_source,'dir')
         for i = 1:length(fn)
             dsfni = fullfile(ps.param.dir_source,fn(i).name);            
             ts = func_readtable(dsfni);
-            [ts.lb{:}]
             if ~ismember('/',[ts.lb{:}])               
                 ps.tag{i,1} = strrep(fn(i).name,'.pseudospectrum.tsv','');
                 for i_field=1:length(ts.lb)
