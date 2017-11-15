@@ -468,6 +468,13 @@ rep_unicode={ ...
         pd.d_spctr_sp = 5;
         pd.dl_grid = 0.5;
         pd.c_grid = colhex.gray.middBrewer;
+        pd.c_mark = 'white';
+    if isfield(ps.param,'mark')
+        switch ps.param.mark
+            case 'gray'
+                pd.c_mark = colhex.gray.middBrewer;
+end
+end
         pd.dl_pseudo = 0.75;
         if ts.wide
             pd.size = [800,700];
@@ -814,7 +821,7 @@ rep_unicode={ ...
                     pseudo.x(Q)-p2(j)<0);
                 if ~isempty(seTag)
                     for k=1:length(seTag)
-                        svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],'#ffffff',pd.dl_pseudo);
+                        svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pc.c_mark,pd.dl_pseudo);
                     end
                 end
             end
