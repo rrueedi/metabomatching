@@ -21,7 +21,7 @@
 \makeatother
 \title{metabomatching}
 \author{Rico Rueedi}
-\date{February 15th, 2017}
+\date{December 1st, 2017}
 \begin{document}
 \maketitle\quad\\[16mm]
 Updates on:
@@ -34,15 +34,17 @@ For bugs, please mention the version of metabomatching that produced the error. 
 \tableofcontents
 \clearpage
 \section{Quick Start}
+\subsection{PhenoMeNal}
+The simplest method to run metabomatching is to use its implementation in the PhenoMeNal portal \href{http://public.phenomenal-h2020.eu}, located in the NMR section. Because the PhenoMeNal implementation is designed for ease of use, some advanced features may not be accessible. A set of test data is provided.
 \subsection{Docker}
-The simplest method to run metabomatching is to use the metabomatching docker image. With a working \href{http://www.docker.com/products/overview}{docker} installation, run
+The simplest method to run the full version of metabomatching is to use the metabomatching docker image. With a working \href{http://www.docker.com/products/overview}{docker} installation, run
 \begin{verbatim}
-  docker pull metabomatching/metabomatching-pre
+  docker pull docker-registry.phenomenal-h2020.eu/phnmnl/metabomatching
 \end{verbatim}
 to download the metabomatching container. The download may take some time, as the container includes a full Linux operating system, octave to run metabomatching, and inkscape to convert metabomatching figures from SVG to PDF. 
 \paragraph{Minimal Run} Run
 \begin{verbatim}
-  docker run -i -v <directory>:/mm-ps metabomatching/metabomatching-pre
+  docker run -i -v <directory>:/mm-ps metabomatching/metabomatching
 \end{verbatim}
 with \verb|<directory>| the absolute path to the local directory to which you want metabomatching to write its results. This runs metabomatching with default settings on a default pseudospectrum.
 
