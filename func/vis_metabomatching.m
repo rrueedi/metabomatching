@@ -821,7 +821,7 @@ end
                     pseudo.x(Q)-p2(j)<0);
                 if ~isempty(seTag)
                     for k=1:length(seTag)
-                        svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pc.c_mark,pd.dl_pseudo);
+                        svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pd.c_mark,pd.dl_pseudo);
                     end
                 end
             end
