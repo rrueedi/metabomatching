@@ -1,7 +1,9 @@
-function ps = function_load_parameters(dir_source)
+function ps = function_load_parameters(dir_source,fn)
 % FUNCTION_LOAD_PARAMETERS Read parameter file
 ps.param.dir_source = dir_source;
-fn = fullfile(ps.param.dir_source,'parameters.in.tsv');
+if nargin<2
+    fn = fullfile(ps.param.dir_source,'parameters.in.tsv');
+end
 number_fields = {...
     'n_show',...
     'dsh',...
@@ -20,10 +22,13 @@ defaults = { ...
 if exist(fn,'file');
     pr = fun_read(fn,'%s%s');
     for j = 1:length(pr{1})
-        if ismember(pr{1}{j},number_fields)
-            ps.param.(pr{1}{j})=str2double(pr{2}{j});
+        field = pr{1}{j};
+        value = pr{2}{j};
+        if ismember(field,number_fields)
+            ps.param.(field)=str2double(value);
         else
-            ps.param.(pr{1}{j})=pr{2}{j};
+            field=strrep(field,'.','_');
+            ps.param.(field)=value;
         end
     end
 else

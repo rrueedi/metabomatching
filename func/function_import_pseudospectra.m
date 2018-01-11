@@ -57,14 +57,14 @@ if exist(ps.param.dir_source,'dir')
                 end
             end
             for jr = 1:nr
-                ps.tag{jr}=[ps.tag{jr},'pos'];
-                se = ps.p(:,jr)<ps.param.pSuggestive & ps.beta(:,jr)<0;
+                ps.tag{jr}=[ps.tag{jr},'.pos'];
+                se = ps.p(:,jr)<ps.param.p_suggestive & ps.beta(:,jr)<0;
                 ps.beta(se,jr)=-1e-6;
                 ps.pm{jr,1}='positive';
             end
             for jr = (nr+1):2*nr
-                ps.tag{jr}=[ps.tag{jr},'neg'];
-                se = ps.p(:,jr)<ps.param.pSuggestive & ps.beta(:,jr)>0;
+                ps.tag{jr}=[ps.tag{jr},'.neg'];
+                se = ps.p(:,jr)<ps.param.p_suggestive & ps.beta(:,jr)>0;
                 ps.beta(se,jr)=1e-6;
                 ps.pm{jr,1}='negative';
             end
