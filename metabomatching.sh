@@ -111,7 +111,7 @@ function read_args {
 
 read_args "$@"
 
-echo "metabomatching release/0.1.1"
+echo "metabomatching release/0.1.2"
 
 # Set working directory
 if [ -n "$IF_PSS" ] ; then
