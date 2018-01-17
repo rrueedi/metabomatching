@@ -16,6 +16,7 @@ IF_PAR=
 IF_COR=
 OF_SCO=
 OF_PDF=
+VER="0.1.5"
 
 function print_help {
 	echo "Usage: $NM_PROG [options] directory"
@@ -90,9 +91,20 @@ function read_args {
 
 	# Read remaining arguments
 	if [ -z "$IF_PSS" ] ; then
-		[ $# -eq 1 ] || error "You must specify one, and only one, directory to process."
-		DR_WORK="$1"
-		[ -d "$DR_WORK" ] || error "This is not a directory."
+		if [ $# -eq 1 ] ; then
+			[ -d "$DR_WORK" ] || error "This is not a directory."	
+			DR_WORK="$1"
+		elif [ -d "/mm-ps" ] ; then
+			echo "metabomatching "$VER" : no directory provided."
+			echo "metabomatching "$VER" : using dockerfile directory."
+			DR_WORK="/mm-ps"
+			if [[ $(find /mm-ps -type d -name "ps.*" | wc -c) -eq 0 ]]; then
+				echo "/mm-ps is empty, copying default pseudospectrum."
+				cp -r $DR_PROG/test/ps.test $DR_WORK
+			fi
+		else
+			error "You must specify one, and only one, directory to process."
+		fi
 	else
 		[ $# -eq 0 ] || error "You cannot specify a directory when using the -i option."
 		[ -f "$IF_PSS" ] || error "\"$IF_PSS\" is not a file."
@@ -111,7 +123,8 @@ function read_args {
 
 read_args "$@"
 
-echo "metabomatching release/0.1.3"
+echo "metabomatching "$VER" : bash passed; running octave."
+echo ""
 
 # Set working directory
 if [ -n "$IF_PSS" ] ; then
