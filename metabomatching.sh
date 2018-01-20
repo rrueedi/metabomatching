@@ -16,7 +16,7 @@ IF_PAR=
 IF_COR=
 OF_SCO=
 OF_PDF=
-VER="0.1.5"
+VER="0.1.8"
 
 function print_help {
 	echo "Usage: $NM_PROG [options] directory"
@@ -92,7 +92,7 @@ function read_args {
 	# Read remaining arguments
 	if [ -z "$IF_PSS" ] ; then
 		if [ $# -eq 1 ] ; then
-			[ -d "$DR_WORK" ] || error "This is not a directory."	
+			[ -d "$DR_WORK" ] || error "\"$DR_WORK\" is not a directory."	
 			DR_WORK="$1"
 		elif [ -d "/mm-ps" ] ; then
 			echo "metabomatching "$VER" : no directory provided."

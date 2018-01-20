@@ -14,7 +14,7 @@ fi
 # =========
 
 # Test with a directory
-metabomatching.sh -g "$PROG_DIR_NAME/test" -c  || exit 1
+metabomatching.sh -g "$PROG_DIR_NAME/test" -c "" || exit 1
 
 # Test with an input file
 scores_file=$PROG_DIR_NAME/test/sco.tsv
