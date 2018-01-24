@@ -16,7 +16,7 @@ IF_PAR=
 IF_COR=
 OF_SCO=
 OF_PDF=
-VER="0.1.8"
+VER="0.2.0"
 
 function print_help {
 	echo "Usage: $NM_PROG [options] directory"
