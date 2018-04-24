@@ -1,7 +1,12 @@
 function ps = function_metabomatching_core(ps)
 % FUNCTION_METABOMATCHING_CORE  Compute metabomatching scores
 nm = size(ps.sid,1);
-ns = size(ps.p  ,2);
+switch ps.param.pstype
+    case 'xs'
+        ns = size(ps.p,2);      
+    case 'z'
+        ns = size(ps.z,2);
+end
 ps.score = NaN(nm,ns);
 L = ps.param.decorr_lambda;
 for jm = 1:nm
@@ -18,7 +23,12 @@ for jm = 1:nm
         D = blkdiag(subC{:});
         clear subC
         C = (1-L)*D+L*eye(nb_inmet);
-        z = ps.beta(se_met,:)./ps.se(se_met,:);
+        switch ps.param.pstype
+            case 'xs'
+                z = ps.beta(se_met,:)./ps.se(se_met,:);
+            case 'z'
+                z = ps.z(se_met,:);
+        end
         switch ps.param.scoring
             case 'chisq'
                 chisq = sum(z.*(C\z),1);
@@ -33,7 +43,12 @@ for jm = 1:nm
     else
         se_met = find(ps.mim(:,jm));
         nb_inmet = length(se_met);
-        z = ps.beta(se_met,:)./ps.se(se_met,:);
+        switch ps.param.pstype
+            case 'xs'
+                z = ps.beta(se_met,:)./ps.se(se_met,:);
+            case 'z'
+                z = ps.z(se_met,:);
+        end
         switch ps.param.scoring
             case 'chisq'
                 chisq = sum(z.*z,1);

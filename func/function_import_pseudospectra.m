@@ -3,7 +3,7 @@ function ps=function_import_pseudospectra(ps)
 if exist(ps.param.dir_source,'dir')
     fn=dir(fullfile(ps.param.dir_source,'*.pseudospectrum.tsv'));
     if ~isempty(fn)
-        for f={'beta','se','p','tag'}
+        for f={'beta','se','p','tag','z'}
             if isfield(ps,f{1});
                 ps = rmfield(ps,f{1});
             end

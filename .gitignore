@@ -7,4 +7,5 @@ wd
 *.toc
 *.out
 ps.*
+.DS*
 out
