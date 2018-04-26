@@ -275,6 +275,12 @@ if isfield(ps.param,'correlation_missing')
         pd.fg_set = [pd.fg_set;{'','missing'}];
     end
 end
+%       pstype
+if strcmp(ps.param.pstype,'xs')
+    pd.fg_set = [pd.fg_set;{'type','XS'}];
+elseif strcmp(ps.param.pstype,'z')
+    pd.fg_set = [pd.fg_set;{'type','Z'}];
+end
 %% ##### ##### LOOPING OVER PSEUDOS ##### #####
 for jPseudo=1:length(ps.tag)
     param=ps.param;
@@ -282,11 +288,18 @@ for jPseudo=1:length(ps.tag)
     param.cas_ctrl = ps.cas_control{jPseudo};
     param.tag = ps.tag{jPseudo};
     pseudo.x = ps.shift;
-    pseudo.beta = ps.beta(:,jPseudo);
-    pseudo.c = 1+(pseudo.beta<0);
-    pseudo.se = ps.se(:,jPseudo);
-    pseudo.y = ps.p(:,jPseudo);
-    pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
+    switch param.pstype
+        case 'xs'
+            pseudo.beta = ps.beta(:,jPseudo);
+            pseudo.c = 1+(pseudo.beta<0);
+            %pseudo.se = ps.se(:,jPseudo);
+            pseudo.y = ps.p(:,jPseudo);
+            pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
+        case 'z'
+            pseudo.c = 1+(ps.z<0);
+            pseudo.y = ps.z(:,jPseudo);
+            pseudo.x_sig = abs(pseudo.y)>param.p_significant;
+    end
     match = matches;
     match.score = matches.score(:,jPseudo);
     %
@@ -432,7 +445,7 @@ for jPseudo=1:length(ps.tag)
     sh_p=[];
     
     if any(pseudo.x_sig)
-        sh=pseudo.x(pseudo.x_sig);
+        sh=pseudo.x(pseudo.x_sig);      %sh has all the shift that have significant p-value
         sh_p = pseudo.y(pseudo.x_sig);
         
         sh_cl=1;
@@ -454,22 +467,45 @@ for jPseudo=1:length(ps.tag)
         end
     end
     % scale p-values
-    pseudo.p_break_vl = 12;
-    pseudo.p_break_pt = 0.75;
+    switch param.pstype
+        case 'xs'
+            pseudo.p_break_vl = 12;
+            pseudo.p_break_pt = 0.75;
+            pseudo.p_GMax = 256;  
+        case 'z'
+            pseudo.p_break_vl = 8;
+            pseudo.p_break_pt = 0.66;
+            pseudo.p_GMax = 32;
+    end
     pseudo.y(end+1) = param.p_significant; % adding p_sig here to get its val in new axis
-    pseudo.y = -log10(pseudo.y);
+    switch param.pstype
+        case 'xs'
+            pseudo.y = -log10(pseudo.y);
+        case 'z'
+            pseudo.y = abs(pseudo.y);
+    end
     sl1=pseudo.y<pseudo.p_break_vl;
     sl2=pseudo.y>=pseudo.p_break_vl;
-    pseudo.y(sl1)=pseudo.p_break_pt*pseudo.y(sl1)/pseudo.p_break_vl;
-    pseudo.y(sl2)=pseudo.p_break_pt+(1-pseudo.p_break_pt)*...
-        log2(1+pseudo.y(sl2)-pseudo.p_break_vl)/log2(1+256);
-    pseudo.ySig=pseudo.y(end);
-    pseudo.y(end)=[];
-    pseudo.yax_maj = [pseudo.p_break_pt*[0,4,8,12]/pseudo.p_break_vl,1];
-    pseudo.yax_min = [pseudo.p_break_pt*[1,2,3,5,6,7,9,10,11]/pseudo.p_break_vl,...
-        pseudo.p_break_pt+(1-pseudo.p_break_pt)*log2(1+([16,32:32:256]))/log2(257)];
+    switch param.pstype
+        case 'xs'
+            pseudo.y(sl1)=pseudo.p_break_pt*pseudo.y(sl1)/pseudo.p_break_vl;
+            pseudo.y(sl2)=pseudo.p_break_pt+(1-pseudo.p_break_pt)*...
+              log2(1+pseudo.y(sl2)-pseudo.p_break_vl)/log2(1+pseudo.p_GMax);
+            pseudo.ySig=pseudo.y(end);
+            pseudo.y(end)=[];
+            pseudo.yax_maj = [pseudo.p_break_pt*(0:4:pseudo.p_break_vl)/pseudo.p_break_vl,1];
+            pseudo.yax_min = [pseudo.p_break_pt*(1:1:pseudo.p_break_vl)/pseudo.p_break_vl,...
+                pseudo.p_break_pt+(1-pseudo.p_break_pt)*log2(1+([16,32:32:pseudo.p_GMax]))/log2(1+pseudo.p_GMax)];
+        case 'z'
+            pseudo.y(sl1)=pseudo.p_break_pt*pseudo.y(sl1)/pseudo.p_break_vl;
+            pseudo.y(sl2)=pseudo.p_break_pt+(1-pseudo.p_break_pt)/(pseudo.p_GMax-pseudo.p_break_vl)*(pseudo.p_GMax-pseudo.y(sl2));
+            pseudo.ySig=pseudo.y(end);
+            pseudo.y(end)=[];
+            pseudo.yax_maj = [pseudo.p_break_pt*(0:4:pseudo.p_break_vl)/pseudo.p_break_vl,1];
+            pseudo.yax_min = [pseudo.p_break_pt*(1:1:pseudo.p_break_vl)/pseudo.p_break_vl,...
+                pseudo.p_break_pt+(1-pseudo.p_break_pt)*(pseudo.p_break_vl:8:pseudo.p_GMax)/pseudo.p_GMax];
+    end
     pd.dpi = 1;
-    
     pd.d0 = 4;
     pd.d1 = 4;
     pd.d_tmin = 3;
@@ -703,17 +739,30 @@ for jPseudo=1:length(ps.tag)
         end
     end
     svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
+    switch param.pstype
+        case 'xs'
+            pd.xLegend='&#946;';
+        case 'z'
+            pd.xLegend='Z';
+    end
     pd.ssBetaLegend = [...
-        '&#946;:',...
-        '<tspan dy="-0.5" fill="',colhex.orange.darkBrewer,  '">&#9632;</tspan>',...
-        '<tspan dy="+0.5" dx="-0.3">&#60;0&#60;</tspan>',...
-        '<tspan dy="-0.5" dx="-0.3" fill="',colhex.blue.darkBrewer,  '">&#9632;</tspan>'];
+            pd.xLegend,...
+            '<tspan dy="-0.5" fill="',colhex.orange.darkBrewer,  '">&#9632;</tspan>',...
+            '<tspan dy="+0.5" dx="-0.3">&#60;0&#60;</tspan>',...
+            '<tspan dy="-0.5" dx="-0.3" fill="',colhex.blue.darkBrewer,  '">&#9632;</tspan>'];
     svgo_text_c(3+sh2x(min(pd.xRange)),pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce,pd.ssBetaLegend,'legend','end');
     fp('</g>');
     % ----- pseudospectrum y-axis
     ggo(pd.o_pseudo_yaxis);
     svgo_line(pd.s_pseudo_yaxis(1),[0,pd.s_pseudo_yaxis(2)],pd.c_grid,pd.dl_grid);
-    pd.lbAxisY={'0','4','8','12','256'};
+    switch param.pstype
+        case 'xs'
+           pd.lbAxisY = {'0','4','8','12','256'};
+           pd.yLabel = '&#x2212; log <tspan font-style="italic">p</tspan>';
+        case 'z'
+           pd.lbAxisY = {'0','4','8','32'};
+           pd.yLabel = 'Z-score';
+    end
     fprintf(file_id,[...
         '<text x="%f" y="%f" ',...
         'font-size="',num2str(fontsize),...
@@ -721,10 +770,10 @@ for jPseudo=1:length(ps.tag)
         '" text-anchor="middle',...
         '" transform="rotate(%d,%f,%f)',...
         '">%s</text>\n'],...
-        pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,270,pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,'&#x2212; log <tspan font-style="italic">p</tspan>');
+        pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,270,pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,pd.yLabel);
     for i = 1:length(pseudo.yax_maj)
         svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmaj*[1,-1],pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i),pd.c_grid,pd.dl_grid);
-        svgo_text_c(pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,pd.lbAxisY{6-i},'normal','end');
+        svgo_text_c(pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,pd.lbAxisY{1+length(pd.lbAxisY)-i},'normal','end');
     end
     for i = 1:length(pseudo.yax_min)
         svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmin*[-1,0],pd.s_pseudo_yaxis(2)*(1-pseudo.yax_min(i)),pd.c_grid,pd.dl_grid);
