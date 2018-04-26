@@ -18,6 +18,7 @@ for i = 1:length(dirs_source)
     ps=build_spectrum_database(ps);
     ps=function_import_correlation(ps);
     ps=function_import_pseudospectra(ps);
+    ps=function_process_pseudospectra(ps);
     ps=function_build_mim(ps);
     fprintf(' done\n--- building transition matrix ----');
     ps=function_metabomatching_core(ps);
