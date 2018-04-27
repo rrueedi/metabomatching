@@ -232,10 +232,28 @@ else
         end
     end
 end
+%% ##### GET z-scores for isa case #####
+switch ps.param.pstype
+    case 'isa'
+        fn_z=fullfile(ps.param.dir_source,'z.tsv');
+        fi = fopen(fn_z);
+        for i = 1:size(ps.isa,1)
+            pr = textscan(fi,'%f',size(ps.isa,2));
+            ps.z(i,:)=pr{1};
+        end
+    otherwise
+        return
+end
 %% ##### FORMAT PARAMETERS FOR SETTINGS BOX #####
 %
 % ----- figure title
 pd.fg_set={};
+%       pstype
+if strcmp(ps.param.pstype,'z')
+    pd.fg_set = [pd.fg_set;{'type','Z-score'}];
+elseif strcmp(ps.param.pstype,'isa')
+    pd.fg_set = [pd.fg_set;{'type','ISA'}];
+end
 %       variant
 opt_variant = {'2-compound','&#x00B1;','&#x00B1;-2-compound'};
 opt_ix = find(strcmp(ps.param.variant,{'2c','pm','pm2c'}));
@@ -275,12 +293,7 @@ if isfield(ps.param,'correlation_missing')
         pd.fg_set = [pd.fg_set;{'','missing'}];
     end
 end
-%       pstype
-if strcmp(ps.param.pstype,'xs')
-    pd.fg_set = [pd.fg_set;{'type','XS'}];
-elseif strcmp(ps.param.pstype,'z')
-    pd.fg_set = [pd.fg_set;{'type','Z'}];
-end
+
 %% ##### ##### LOOPING OVER PSEUDOS ##### #####
 for jPseudo=1:length(ps.tag)
     param=ps.param;
@@ -295,7 +308,7 @@ for jPseudo=1:length(ps.tag)
             %pseudo.se = ps.se(:,jPseudo);
             pseudo.y = ps.p(:,jPseudo);
             pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
-        case 'z'
+        otherwise
             pseudo.c = 1+(ps.z<0);
             pseudo.y = ps.z(:,jPseudo);
             pseudo.x_sig = abs(pseudo.y)>param.p_significant;
@@ -472,16 +485,16 @@ for jPseudo=1:length(ps.tag)
             pseudo.p_break_vl = 12;
             pseudo.p_break_pt = 0.75;
             pseudo.p_GMax = 256;  
-        case 'z'
+        otherwise
             pseudo.p_break_vl = 8;
-            pseudo.p_break_pt = 0.66;
+            pseudo.p_break_pt = 2/3;
             pseudo.p_GMax = 32;
     end
     pseudo.y(end+1) = param.p_significant; % adding p_sig here to get its val in new axis
     switch param.pstype
         case 'xs'
             pseudo.y = -log10(pseudo.y);
-        case 'z'
+        otherwise
             pseudo.y = abs(pseudo.y);
     end
     sl1=pseudo.y<pseudo.p_break_vl;
@@ -496,7 +509,7 @@ for jPseudo=1:length(ps.tag)
             pseudo.yax_maj = [pseudo.p_break_pt*(0:4:pseudo.p_break_vl)/pseudo.p_break_vl,1];
             pseudo.yax_min = [pseudo.p_break_pt*(1:1:pseudo.p_break_vl)/pseudo.p_break_vl,...
                 pseudo.p_break_pt+(1-pseudo.p_break_pt)*log2(1+([16,32:32:pseudo.p_GMax]))/log2(1+pseudo.p_GMax)];
-        case 'z'
+        otherwise
             pseudo.y(sl1)=pseudo.p_break_pt*pseudo.y(sl1)/pseudo.p_break_vl;
             pseudo.y(sl2)=pseudo.p_break_pt+(1-pseudo.p_break_pt)/(pseudo.p_GMax-pseudo.p_break_vl)*(pseudo.p_GMax-pseudo.y(sl2));
             pseudo.ySig=pseudo.y(end);
@@ -741,9 +754,9 @@ for jPseudo=1:length(ps.tag)
     svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
     switch param.pstype
         case 'xs'
-            pd.xLegend='&#946;';
-        case 'z'
-            pd.xLegend='Z';
+            pd.xLegend='&#946;: ';
+        otherwise
+            pd.xLegend='Z: ';
     end
     pd.ssBetaLegend = [...
             pd.xLegend,...
@@ -759,7 +772,7 @@ for jPseudo=1:length(ps.tag)
         case 'xs'
            pd.lbAxisY = {'0','4','8','12','256'};
            pd.yLabel = '&#x2212; log <tspan font-style="italic">p</tspan>';
-        case 'z'
+        otherwise
            pd.lbAxisY = {'0','4','8','32'};
            pd.yLabel = 'Z-score';
     end

@@ -4,7 +4,7 @@ nm = size(ps.sid,1);
 switch ps.param.pstype
     case 'xs'
         ns = size(ps.p,2);      
-    case 'z'
+    otherwise
         ns = size(ps.z,2);
 end
 ps.score = NaN(nm,ns);
@@ -26,7 +26,7 @@ for jm = 1:nm
         switch ps.param.pstype
             case 'xs'
                 z = ps.beta(se_met,:)./ps.se(se_met,:);
-            case 'z'
+            otherwise
                 z = ps.z(se_met,:);
         end
         switch ps.param.scoring
@@ -46,7 +46,7 @@ for jm = 1:nm
         switch ps.param.pstype
             case 'xs'
                 z = ps.beta(se_met,:)./ps.se(se_met,:);
-            case 'z'
+            otherwise
                 z = ps.z(se_met,:);
         end
         switch ps.param.scoring
