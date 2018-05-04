@@ -34,11 +34,14 @@ if exist(ps.param.dir_source,'dir')
                         end
                     end
                 end
-                se_dump = find(all(ps.beta==0)|all(ps.p==0)|all(ps.se==0));
-                ps.tag(se_dump)=[];
-                ps.beta(:,se_dump)=[];
-                ps.se(:,se_dump)=[];
-                ps.p(:,se_dump)=[];
+                switch ps.param.pstype
+                    case 'xs'
+                        se_dump = find(all(ps.beta==0)|all(ps.p==0)|all(ps.se==0));
+                        ps.tag(se_dump)=[];
+                        ps.beta(:,se_dump)=[];
+                        ps.se(:,se_dump)=[];
+                        ps.p(:,se_dump)=[];
+                end
             end
         end
         ps.shift = ps.shift(:,1);

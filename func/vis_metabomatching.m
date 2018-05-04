@@ -309,7 +309,7 @@ for jPseudo=1:length(ps.tag)
             pseudo.y = ps.p(:,jPseudo);
             pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
         otherwise
-            pseudo.c = 1+(ps.z<0);
+            pseudo.c = 1+(ps.z(:,jPseudo)<0);
             pseudo.y = ps.z(:,jPseudo);
             pseudo.x_sig = abs(pseudo.y)>param.p_significant;
     end
