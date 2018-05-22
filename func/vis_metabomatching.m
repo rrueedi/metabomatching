@@ -241,8 +241,6 @@ switch ps.param.pstype
             pr = textscan(fi,'%f',size(ps.isa,2));
             ps.z(i,:)=pr{1};
         end
-    otherwise
-        return
 end
 %% ##### FORMAT PARAMETERS FOR SETTINGS BOX #####
 %
