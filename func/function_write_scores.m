@@ -47,6 +47,22 @@ else
             end
         end
         fclose(fi);
+        
+        if isfield(ps,'scoreadj')
+            fn=fullfile(ps.param.dir_source,[ps.tag{i},'.scoresadj.tsv']);
+            fi=fopen(fn,'w');
+            fprintf(fi,'cas\tid\tscore\n');
+            for j = 1:size(ps.sid,1)
+                if ismember(ps.param.variant,{'pm2c','2c'})
+                    fprintf(fi,'%s\t%d\t%s\t%d\t%.4f\n',...
+                        ps.cas{j,1},ps.sid(j,1),...
+                        ps.cas{j,2},ps.sid(j,2),ps.score(j,i));
+                else
+                    fprintf(fi,'%s\t%d\t%.4f\n',ps.cas{j},ps.sid(j),ps.scoreadj(j,i));
+                end
+            end
+            fclose(fi);
+        end
     end
 end
 numberFields = {'n_show','dsh','decorr_lambda','snp','p_significant','pSuggestive'};

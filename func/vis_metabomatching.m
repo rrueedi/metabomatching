@@ -2,6 +2,7 @@ function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
 %dir_source=ps.param.dir_source;
 ts.howto = false;
+ts.scoreadj = 0;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
 colhex.orange.darkBrewer = '#FF7F00';
@@ -82,6 +83,9 @@ for j = 1:size(pdeepdef,1)
                 ps.param.([pdeepdef{j,1},'_',ps.param.deep.tag{i}]);
         end
     end
+end
+if exist([dir_source,'op.csv'],'file')
+    ps.op = csvread([dir_source,'op.csv']);
 end
 %% ##### CLEAN TAGS #####
 for j = 1:length(ps.tag);
@@ -230,8 +234,24 @@ else
             matches.score(:,i)=pr{3};
             nVar=1;
         end
+        if exist( fullfile(dir_source,[ps.tag{1},'.scoresadj.tsv']),'file')
+            ts.scoreadj=1;
+            fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoresadj.tsv']));
+            pr = textscan(fi,'%s%f%f','delimiter','\t','headerlines',1);
+            fclose(fi);
+            if i == 1
+                matches.cas=pr{1};
+                matches.sid=pr{2};
+                [a,b] = ismember(matches.sid,metdb.sid);
+                matches.name = metdb.name(b(a));
+                matches.casnum = metdb.casnum(b(a));
+            end
+            matches.scoreadj(:,i)=pr{3};
+            nVar=1;
+        end
     end
 end
+fprintf('scoreadj :: %d\n',ts.scoreadj);
 %% ##### FORMAT PARAMETERS FOR SETTINGS BOX #####
 %
 % ----- figure title
@@ -289,6 +309,9 @@ for jPseudo=1:length(ps.tag)
     pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
     match = matches;
     match.score = matches.score(:,jPseudo);
+    if ts.scoreadj
+        match.scoreadj=matches.scoreadj(:,jPseudo);
+    end
     %
     % ----- pseudospectrum title
     pd.fg_pseudo_title = ['Pseudospectrum ',param.description];
@@ -406,6 +429,9 @@ for jPseudo=1:length(ps.tag)
     for i = 1:nshow
         ix = find(match.show==i);
         spectrum.score(i) = match.score(ix);
+        if ts.scoreadj
+            spectrum.scoreadj(i) = match.scoreadj(ix);
+        end
         for j = 1:nVar
             jx = find(metdb.sid==match.sid(ix,j));
             spectrum.met_name{i,j} = metdb.name{jx};
@@ -739,7 +765,11 @@ for jPseudo=1:length(ps.tag)
     ggo(pd.o_spectr_subtt);
     svgo_text_c(0,pd.d_text_hght,'match set','normal','s');
     ggo(pd.o_spectr_headr);
-    svgo_text_c(0,pd.d_text_hght,'rank','normal','s');
+    if ts.scoreadj
+        svgo_text_c(0,pd.d_text_hght,'adj','normal','s');
+    else
+        svgo_text_c(0,pd.d_text_hght,'rank','normal','s');
+    end
     fp('</g>');
     fp('</g>');
     % ##### SPECTRUM GROUP #####
@@ -842,18 +872,25 @@ for jPseudo=1:length(ps.tag)
     end
     % ##### SPECTRUM Y-LABEL BOX #####
     ggo(pd.o_spectr_label);
-    rankExponent=max(floor(log10(spectrum.rank)));
-    for i = 1:length(pd.y_spectr_lines)
-        A = floor(log10(spectrum.rank(i)));
-        str = num2str(spectrum.rank(i));
-        while A < rankExponent
-            str=add0(str);
-            A=A+1;
+    if ts.scoreadj
+        for i = 1:length(pd.y_spectr_lines)
+            str = num2str(spectrum.scoreadj(i),'%.1f');
+            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
-        %        if spectrum.ctrl(i)==1
-        %            str=[str,'&#8902;'];
-        %        end
-        svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+    else
+        rankExponent=max(floor(log10(spectrum.rank)));
+        for i = 1:length(pd.y_spectr_lines)
+            A = floor(log10(spectrum.rank(i)));
+            str = num2str(spectrum.rank(i));
+            while A < rankExponent
+                str=add0(str);
+                A=A+1;
+            end
+            %        if spectrum.ctrl(i)==1
+            %            str=[str,'&#8902;'];
+            %        end
+            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+        end
     end
     fp('</g>');
     % ----- spectrum x-axis
@@ -966,7 +1003,19 @@ for jPseudo=1:length(ps.tag)
                 str = add0(str);
             end
         end
-        svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+        disp(ps);
+        if isfield(ps,'op')
+            if j==1
+                fprintf('.. %s - sco %.1f - % op %.1\n',ps.tag{jPseudo},spectrum.score(i),ps.op(jPseudo));
+            end
+            if spectrum.score(i)>ps.op(jPseudo)
+                svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'permsig','s');
+            else
+                svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+            end
+        else
+            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+        end
         if ts.is2c
             if length(spectrum.met_name{i,1})<14
                 str1 = spectrum.met_name{i,1};
