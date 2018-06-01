@@ -2,7 +2,6 @@ function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
 %dir_source=ps.param.dir_source;
 ts.howto = false;
-ts.scoreadj = 0;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
 colhex.orange.darkBrewer = '#FF7F00';
@@ -31,18 +30,7 @@ fn_description = fullfile(dir_source,'description.tsv');
 fn_control     = fullfile(dir_source,'cascontrol.tsv');
 %% ##### GET PARAMETERS #####
 ps=function_load_parameters(dir_source,fn_parameters);
-% numberFields = {'n_show','dsh','decorr_lambda','snp','p_significant','p_pm','pSuggestive','wide'};
-% fi = fopen(fn_parameters);
-% pr = textscan(fi,'%s%s','delimiter','\t');
-% fclose(fi);
-% for j = 1:length(pr{1})
-%     if ismember(pr{1}{j},numberFields)
-%         ps.param.(pr{1}{j})=str2double(pr{2}{j});
-%     else
-%         ps.param.(pr{1}{j})=pr{2}{j};
-%     end
-% end
-% ps.param.dir_source=dir_source;
+ts.scoreadj = ps.param.n_permutation>0;
 % --- 2-compound mode implies many graphical changes
 ts.is2c = ismember(ps.param.variant,{'2c','pm2c'});
 % --- wider figure
@@ -55,7 +43,7 @@ end
 if exist(fn_metabolites,'file');
     load(fn_metabolites);
 else
-    build_spectrum_database(dir_source)
+    build_spectrum_database(dir_source);
 end
 %% ##### SVG FRIENDLY NAMES #####
 rep_unicode={ ...
@@ -251,7 +239,6 @@ else
         end
     end
 end
-fprintf('scoreadj :: %d\n',ts.scoreadj);
 %% ##### FORMAT PARAMETERS FOR SETTINGS BOX #####
 %
 % ----- figure title
@@ -795,7 +782,6 @@ for jPseudo=1:length(ps.tag)
     % ----- markers for significant peaks
     for i=1:length(sh_label)
         nnn = num2str(round(100*sh_label(i)),'%03d');
-        
         svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.6" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.6" font-size="8">',nnn(3),'</tspan>'],'legend');
@@ -872,6 +858,8 @@ for jPseudo=1:length(ps.tag)
     end
     % ##### SPECTRUM Y-LABEL BOX #####
     ggo(pd.o_spectr_label);
+    % ----- spectrum rank
+    %       if permutation scores exist, print them instead of ranks
     if ts.scoreadj
         for i = 1:length(pd.y_spectr_lines)
             str = num2str(spectrum.scoreadj(i),'%.1f');
@@ -886,9 +874,6 @@ for jPseudo=1:length(ps.tag)
                 str=add0(str);
                 A=A+1;
             end
-            %        if spectrum.ctrl(i)==1
-            %            str=[str,'&#8902;'];
-            %        end
             svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
     end
@@ -911,7 +896,7 @@ for jPseudo=1:length(ps.tag)
         end
     end
     svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
-    
+
     if strcmp(param.mode,'peak')
         str='rel. h: ';
     elseif strcmp(param.mode,'multiplet');
@@ -1003,7 +988,6 @@ for jPseudo=1:length(ps.tag)
                 str = add0(str);
             end
         end
-        disp(ps);
         if isfield(ps,'op')
             if j==1
                 fprintf('.. %s - sco %.1f - % op %.1\n',ps.tag{jPseudo},spectrum.score(i),ps.op(jPseudo));

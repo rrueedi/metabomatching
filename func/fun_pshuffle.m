@@ -1,34 +1,24 @@
 function ps = fun_pshuffle(ps)
-% this should happen before
-
-[~,r] = sort(ps.shift);
-
-for F = {'shift','beta','se','p','mim'}
-    f = F{1};
-    ps.(f)=ps.(f)(r,:);
-end
-
 % FUN_PSHUFFLE  Build shuffled pseudospectra to compute permutation scores
 
 nm = length(ps.sid);
 nf = length(ps.shift);
 ns = length(ps.tag);
+np = ps.param.n_permutation;
 
 % deep parameters
 d_hole = 0.3;
 d_cut = 0.04;
 ts_smooth = 0;
-n_permutation = 9999;
+
 s = ps.shift;
 
-ps.zperm = NaN(nf,n_permutation,ns);
+ps.zperm = NaN(nf,np,ns);
 
 % identify holes
 % holes are common to all pseudospectra
 d = s(2:end)-s(1:(end-1));
 ix_hole = find( d>d_hole );
-
-ps.z = ps.beta./ps.se;
 
 for js = 1:ns
     g = ps.z(:,js);
@@ -75,7 +65,7 @@ for js = 1:ns
         cs=[cs;length(se)];
     end
     
-    for jp = 1:n_permutation
+    for jp = 1:np
         mm=0;
         [~,perm] = sort(rand(nc,1));
         for jc = 1:nc

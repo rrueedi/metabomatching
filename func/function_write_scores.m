@@ -48,7 +48,7 @@ else
         end
         fclose(fi);
         
-        if isfield(ps,'scoreadj')
+        if ps.param.n_permutation>0
             fn=fullfile(ps.param.dir_source,[ps.tag{i},'.scoresadj.tsv']);
             fi=fopen(fn,'w');
             fprintf(fi,'cas\tid\tscore\n');
@@ -65,7 +65,7 @@ else
         end
     end
 end
-numberFields = {'n_show','dsh','decorr_lambda','snp','p_significant','pSuggestive'};
+numberFields = {'n_show','dsh','decorr_lambda','snp','p_significant','p_suggestive','n_permutation'};
 fi=fopen(fullfile(ps.param.dir_source,'parameters.out.tsv'),'w');
 F=fieldnames(ps.param);
 for iField = 1:length(F)

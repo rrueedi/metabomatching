@@ -1,15 +1,14 @@
 function ps = fun_pshuffle_score(ps)
 % FUNCTION_PPERMUTE
-nm = size(ps.sid,1);
-nf = size(ps.shift,1);
-ns = size(ps.p  ,2);
-n_permutation = size(ps.zperm,2);
+nm = length(ps.sid);
+nf = length(ps.shift);
+ns = length(ps.tag);
+np = ps.param.n_permutation;
 
-ps.permscore=NaN(n_permutation,ns);
-
+permscore=NaN(np,ns);
 for js = 1:ns
     zpi = squeeze(ps.zperm(:,:,js));
-    opi = NaN(nm,n_permutation);
+    opi = NaN(nm,np);
     for jm = 1:nm
         se_met = find(ps.mim(:,jm));
         nb_inmet = length(se_met);
@@ -28,7 +27,7 @@ for js = 1:ns
     end
     opi(isnan(opi))=0;
     opi = sort(opi,1,'descend');
-    ps.permscore(:,js)=max(opi,[],1);
-    tm = sum(repmat(ps.score(:,js),1,n_permutation)<repmat(ps.permscore(:,js)',nm,1),2);
-    ps.scoreadj(:,js)=-log10((1+tm)/(1+n_permutation));
+    permscore(:,js)=max(opi,[],1);
+    tm = sum(repmat(ps.score(:,js),1,np)<repmat(permscore(:,js)',nm,1),2);
+    ps.scoreadj(:,js)=-log10((1+tm)/(1+np));
 end
