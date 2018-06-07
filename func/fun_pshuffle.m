@@ -75,6 +75,7 @@ for js = 1:ns
             mm=mm+nnc;
         end
     end
+    ps.icut{js}=ix_cut;
 end
 
 

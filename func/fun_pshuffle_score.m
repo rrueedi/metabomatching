@@ -28,6 +28,7 @@ for js = 1:ns
     opi(isnan(opi))=0;
     opi = sort(opi,1,'descend');
     permscore(:,js)=max(opi,[],1);
+    % permscore(:,js)=prctile(opi,97.5,1);
     tm = sum(repmat(ps.score(:,js),1,np)<repmat(permscore(:,js)',nm,1),2);
-    ps.scoreadj(:,js)=-log10((1+tm)/(1+np));
+    ps.scoreadj(:,js)=abs(log10((1+tm)/(1+np)));
 end

@@ -21,6 +21,9 @@ defaults = { ...
     'n_show',8;...
     'n_permutation',0;...
     'p_significant',5e-8};
+special_defaults.dsh_peak = 0.025;
+special_defaults.dsh_multiplet = 0.010;
+special_defaults.p_suggestive = 1E-4;
 % /
 if exist(fn,'file');
     pr = fun_read(fn,'%s%s');
@@ -47,12 +50,13 @@ for i = 1:size(defaults,1)
 end
 if ~isfield(ps.param,'dsh')
     if strcmp(ps.param.mode,'peak');
-        ps.param.dsh=0.025;
+        ps.param.dsh=special_defaults.dsh_peak;
     else
-        ps.param.dsh=0.010;
+        ps.param.dsh=special_defaults.dsh_multiplet;
     end
 end
 if ismember(ps.param.variant,{'pm','pm1c','pm2c'}) && ...
         ~isfield(ps.param,'p_suggestive')
-    ps.param.p_suggestive=1e-4;
+    ps.param.p_suggestive=special_defaults.p_suggestive;
 end
+ps.param.dir_source = dir_source;

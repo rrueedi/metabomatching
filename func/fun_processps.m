@@ -4,13 +4,13 @@ function ps = fun_processps(ps)
 [~,r] = sort(ps.shift);
 sfld = {'shift','beta','se','p','z'};
 for jd = 1:length(sfld)
-fld = sfld{jd};
-if ismember(fld,fieldnames(ps))
-ps.(fld)=ps.(fld)(r,:);
-end
+    fld = sfld{jd};
+    if ismember(fld,fieldnames(ps))
+        ps.(fld)=ps.(fld)(r,:);
+    end
 end
 
 % metabomatching only uses beta and x in their ratio.
 if ~ismember('z',fieldnames(ps))
-ps.z=ps.beta./ps.se;
+    ps.z=ps.beta./ps.se;
 end
