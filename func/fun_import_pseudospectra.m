@@ -1,9 +1,9 @@
-function ps=function_import_pseudospectra(ps)
-% FUNCTION_IMPORT_PSEUDOSPECTRA Read pseudospectrum files
+function ps=fun_import_pseudospectra(ps)
+% FUN_IMPORT_PSEUDOSPECTRA Read pseudospectrum files
 if exist(ps.param.dir_source,'dir')
     fn=dir(fullfile(ps.param.dir_source,'*.pseudospectrum.tsv'));
     if ~isempty(fn)
-        for f={'beta','se','p','tag'}
+        for f={'beta','se','p','tag','isa','z','cr'}
             if isfield(ps,f{1});
                 ps = rmfield(ps,f{1});
             end
@@ -11,6 +11,8 @@ if exist(ps.param.dir_source,'dir')
         for i = 1:length(fn)
             dsfni = fullfile(ps.param.dir_source,fn(i).name);            
             ts = func_readtable(dsfni);
+% a "/" indicates that the pseudospectrum.tsv file contains 
+% multiple pseudospectra; the header is then of the form "tag/variable"            
             if ~ismember('/',[ts.lb{:}])               
                 ps.tag{i,1} = strrep(fn(i).name,'.pseudospectrum.tsv','');
                 for i_field=1:length(ts.lb)
@@ -34,41 +36,38 @@ if exist(ps.param.dir_source,'dir')
                         end
                     end
                 end
-                se_dump = find(all(ps.beta==0)|all(ps.p==0)|all(ps.se==0));
-                ps.tag(se_dump)=[];
-                ps.beta(:,se_dump)=[];
-                ps.se(:,se_dump)=[];
-                ps.p(:,se_dump)=[];
             end
         end
         ps.shift = ps.shift(:,1);
         %
-        if ismember(ps.param.variant,{'pm','pm1c','pm2c'})
-            F=fieldnames(ps);
-            nr = length(ps.tag);
-            for jf = 1:length(F)
-                f=F{jf};
-                if ~ismember(f,{'param','shift'})
-                    if ismember(f,{'beta','se','p'});
-                        ps.(f)=[ps.(f),ps.(f)];
-                    else
-                        ps.(f)=[ps.(f);ps.(f)];
-                    end
+        if ismember('beta',fieldnames(ps))
+            ps.param.pstype='xs';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='p';
+            end
+            if ~isfield(ps.param,'significant')
+                ps.param.significant=-log10(5E-8);
+            else
+                if ps.param.significant<1
+                    ps.param.significant=-log10(ps.param.significant);
                 end
             end
-            for jr = 1:nr
-                ps.tag{jr}=[ps.tag{jr},'.pos'];
-                se = ps.p(:,jr)<ps.param.p_suggestive & ps.beta(:,jr)<0;
-                ps.beta(se,jr)=-1e-6;
-                ps.pm{jr,1}='positive';
+        elseif ismember('isa',fieldnames(ps)); 
+            ps.param.pstype='isa';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='z';
             end
-            for jr = (nr+1):2*nr
-                ps.tag{jr}=[ps.tag{jr},'.neg'];
-                se = ps.p(:,jr)<ps.param.p_suggestive & ps.beta(:,jr)>0;
-                ps.beta(se,jr)=1e-6;
-                ps.pm{jr,1}='negative';
+            if ~isfield(ps.param,'significant')
+                ps.param.significant=7;
             end
-        end
+        elseif ismember('cr',fieldnames(ps));
+            ps.param.pstype='correlation';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='z';
+            end        
+        else
+            error('metabomatching:noTYPE','Couldn''t identify the pseudospectrum type.');
+        end        
     else
         error('metabomatching:noPS','No pseudospectrum files found (*.pseudospectrum.tsv)');
     end

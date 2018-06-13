@@ -13,21 +13,20 @@ for i = 1:length(dirs_source)
     dir_source = dirs_source{i};
     fprintf('+---------------------------------------\n')
     fprintf('|   %s\n+--\n',dir_source);
-    % 
-    ps = function_load_parameters(dir_source);
+    ps = fun_load_parameters(dir_source);
     fprintf('--- loading data ------------------');
     ps = build_spectrum_database(ps);
     ps = function_import_correlation(ps);
-    ps = function_import_pseudospectra(ps);
+    ps = fun_import_pseudospectra(ps);
     ps = fun_processps(ps);
     fprintf(' done\n--- building transition matrix ----');
     ps = function_build_mim(ps);    
     fprintf(' done\n--- metabomatching ----------------');
     ps = function_metabomatching_core(ps);
     if ps.param.n_permutation>0
-    fprintf(' done\n--- permutation -------------------');
-    ps = fun_pshuffle(ps);
-    ps = fun_pshuffle_score(ps);
+        fprintf(' done\n--- permutation -------------------');
+        ps = fun_pshuffle(ps);
+        ps = fun_pshuffle_score(ps);
     end
     fprintf(' done\n--- writing scores ----------------');
     function_write_scores(ps);

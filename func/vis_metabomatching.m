@@ -1,6 +1,6 @@
-function ps=vis_metabomatching(dir_source)
+%function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
-%dir_source=ps.param.dir_source;
+dir_source=ps.param.dir_source;
 ts.howto = false;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
@@ -23,13 +23,13 @@ unicodeRep={ ...
     'delta','&#948;';...
     'epsilon','&#949;';...
     'omega','&#969;'};...;
-    %% ##### FILES ######
+%% ##### FILES ######
 fn_parameters  = fullfile(dir_source,'parameters.out.tsv');
 fn_metabolites = fullfile(dir_source,'metdb.mat');
 fn_description = fullfile(dir_source,'description.tsv');
 fn_control     = fullfile(dir_source,'cascontrol.tsv');
 %% ##### GET PARAMETERS #####
-ps=function_load_parameters(dir_source,fn_parameters);
+ps = function_load_parameters(dir_source,fn_parameters);
 ts.scoreadj = ps.param.n_permutation>0;
 % --- 2-compound mode implies many graphical changes
 ts.is2c = ismember(ps.param.variant,{'2c','pm2c'});
@@ -58,7 +58,8 @@ se = find(not(cellfun(@isempty,strfind(metdb.cas,'BMRB'))));
 metdb.cas(se)={'0-0-0'};
 metdb.casnum=cas2num(metdb.cas);
 %% ##### GET PSEUDOSPECTRUM #####
-ps=function_import_pseudospectra(ps);
+ps = fun_import_pseudospectra(ps);
+ps = fun_processps(ps);
 %% ##### SET DEEP PARAMETERS #####
 ps.param.deep.tag=strrep(strrep(ps.tag,'.','_'),'-','_');
 pdeepdef={'ftt',true;'psa','left'};
@@ -72,6 +73,25 @@ for j = 1:size(pdeepdef,1)
         end
     end
 end
+switch ps.param.plot_type
+    case 'p'
+        ps.param.y_break_vl = 12;
+        ps.param.y_majstep = 4;
+        ps.param.y_minstep = 1;
+        ps.param.y_break_pt = 3/4;
+        ps.param.y_gmax = 256;
+        ps.param.y_logset = [16,32:32:ps.param.y_gmax];
+        ps.param.ps_ylabel = '&#x2212; log <tspan font-style="italic">p</tspan>';
+    otherwise
+        ps.param.y_break_vl = 8;
+        ps.param.y_majstep = 2;
+        ps.param.y_minstep = 1;
+        ps.param.y_break_pt = 2/3;
+        ps.param.y_gmax = 32;
+        ps.param.y_logset = [8:8:ps.param.y_gmax];
+        ps.param.ps_ylabel = 'Z-score';
+end
+        
 if exist([dir_source,'op.csv'],'file')
     ps.op = csvread([dir_source,'op.csv']);
 end
@@ -222,8 +242,7 @@ else
             matches.score(:,i)=pr{3};
             nVar=1;
         end
-        if exist( fullfile(dir_source,[ps.tag{1},'.scoresadj.tsv']),'file')
-            ts.scoreadj=1;
+        if ts.scoreadj
             fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoresadj.tsv']));
             pr = textscan(fi,'%s%f%f','delimiter','\t','headerlines',1);
             fclose(fi);
@@ -275,6 +294,14 @@ elseif ps.param.decorr_lambda < 0.1
 elseif ps.param.decorr_lambda < 1.0
     pd.fg_set = [pd.fg_set;{'decorr',['&#x03BB; = ',num2str(ps.param.decorr_lambda,'%.2f')]}];
 end
+%       pstype
+if strcmp(ps.param.pstype,'correlation')
+    pd.fg_set = [pd.fg_set;{'type','Correlation'}];
+elseif strcmp(ps.param.pstype,'z')
+    pd.fg_set = [pd.fg_set;{'type','Z-Score'}];
+elseif strcmp(ps.param.pstype,'isa')
+    pd.fg_set = [pd.fg_set;{'type','ISA'}];
+end
 %       decorrelation requested, but no correlation file provided
 if isfield(ps.param,'correlation_missing')
     if ps.param.correlation_missing==1
@@ -289,11 +316,29 @@ for jPseudo=1:length(ps.tag)
     param.cas_ctrl = ps.cas_control{jPseudo};
     param.tag = ps.tag{jPseudo};
     pseudo.x = ps.shift;
-    pseudo.beta = ps.beta(:,jPseudo);
-    pseudo.c = 1+(pseudo.beta<0);
-    pseudo.se = ps.se(:,jPseudo);
-    pseudo.y = ps.p(:,jPseudo);
-    pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
+    switch param.plot_type
+        case 'p'
+            pseudo.beta = ps.beta(:,jPseudo);
+            pseudo.c = 1+(pseudo.beta<0);
+            pseudo.y = ps.p(:,jPseudo);
+            pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
+        otherwise
+            pseudo.z = ps.z(:,jPseudo);
+            pseudo.c = 1+(pseudo.z<0);
+            pseudo.y = abs(pseudo.z);
+            if ~isfield(param,'significant')
+                param.significant = max(pseudo.y);
+                disp(param.significant);
+                pseudo.x_sig = pseudo.y>=param.significant;
+            else
+                if isnan(ps.param.significant)
+                    param.significant = max(pseudo.y);
+                    disp(param.significant);
+                end
+                pseudo.x_sig = pseudo.y>=param.significant;
+                
+            end
+        end
     match = matches;
     match.score = matches.score(:,jPseudo);
     if ts.scoreadj
@@ -467,20 +512,26 @@ for jPseudo=1:length(ps.tag)
         end
     end
     % scale p-values
-    pseudo.p_break_vl = 12;
-    pseudo.p_break_pt = 0.75;
-    pseudo.y(end+1) = param.p_significant; % adding p_sig here to get its val in new axis
-    pseudo.y = -log10(pseudo.y);
-    sl1=pseudo.y<pseudo.p_break_vl;
-    sl2=pseudo.y>=pseudo.p_break_vl;
-    pseudo.y(sl1)=pseudo.p_break_pt*pseudo.y(sl1)/pseudo.p_break_vl;
-    pseudo.y(sl2)=pseudo.p_break_pt+(1-pseudo.p_break_pt)*...
-        log2(1+pseudo.y(sl2)-pseudo.p_break_vl)/log2(1+256);
+    if all(pseudo.y<1)
+        pseudo.y = -log10(pseudo.y);
+    end
+    pseudo.y(end+1) = param.significant; % adding p_sig here to get its val in new axis
+    pseudo.y(pseudo.y>param.y_gmax)=param.y_gmax;
+    sl1=pseudo.y< param.y_break_vl;
+    sl2=pseudo.y>=param.y_break_vl;
+    pseudo.y(sl1)=param.y_break_pt*pseudo.y(sl1)/param.y_break_vl;
+    pseudo.y(sl2)=param.y_break_pt+(1-param.y_break_pt)*...
+        log2(1+pseudo.y(sl2)-param.y_break_vl)/log2(1+param.y_gmax);
     pseudo.ySig=pseudo.y(end);
     pseudo.y(end)=[];
-    pseudo.yax_maj = [pseudo.p_break_pt*[0,4,8,12]/pseudo.p_break_vl,1];
-    pseudo.yax_min = [pseudo.p_break_pt*[1,2,3,5,6,7,9,10,11]/pseudo.p_break_vl,...
-        pseudo.p_break_pt+(1-pseudo.p_break_pt)*log2(1+([16,32:32:256]))/log2(257)];
+    majset = (0:param.y_majstep:param.y_break_vl);
+    minset = setdiff((0:param.y_minstep:param.y_break_vl),majset);
+    pseudo.yax_maj = ...
+    1-[param.y_break_pt*majset/param.y_break_vl,1];
+    pseudo.yax_maj_vl = [majset,param.y_gmax];
+    pseudo.yax_min = [...
+        param.y_break_pt*minset/param.y_break_vl,...
+        param.y_break_pt+(1-param.y_break_pt)*log2(1+param.y_logset)/log2(1+param.y_gmax)];
     pd.dpi = 1;
     
     pd.d0 = 4;
@@ -661,7 +712,7 @@ for jPseudo=1:length(ps.tag)
         svgo_line(A(ia),[0,pd.s_pseudo_boxxx(2)],pd.c_grid,pd.dl_grid);
     end
     %       horizontal
-    A=pd.s_pseudo_boxxx(2)*[0,(1-pseudo.p_break_pt),1];
+    A=pd.s_pseudo_boxxx(2)*[0,(1-param.y_break_pt),1];
     for ia=1:length(A)
         svgo_line([0,pd.s_pseudo_boxxx(1)],A(ia),pd.c_grid,pd.dl_grid);
     end
@@ -726,7 +777,6 @@ for jPseudo=1:length(ps.tag)
     % ----- pseudospectrum y-axis
     ggo(pd.o_pseudo_yaxis);
     svgo_line(pd.s_pseudo_yaxis(1),[0,pd.s_pseudo_yaxis(2)],pd.c_grid,pd.dl_grid);
-    pd.lbAxisY={'0','4','8','12','256'};
     fprintf(file_id,[...
         '<text x="%f" y="%f" ',...
         'font-size="',num2str(fontsize),...
@@ -734,10 +784,10 @@ for jPseudo=1:length(ps.tag)
         '" text-anchor="middle',...
         '" transform="rotate(%d,%f,%f)',...
         '">%s</text>\n'],...
-        pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,270,pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,'&#x2212; log <tspan font-style="italic">p</tspan>');
+        pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,270,pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,param.ps_ylabel);
     for i = 1:length(pseudo.yax_maj)
         svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmaj*[1,-1],pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i),pd.c_grid,pd.dl_grid);
-        svgo_text_c(pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,pd.lbAxisY{6-i},'normal','end');
+        svgo_text_c(pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,num2str(pseudo.yax_maj_vl(i)),'normal','end');
     end
     for i = 1:length(pseudo.yax_min)
         svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmin*[-1,0],pd.s_pseudo_yaxis(2)*(1-pseudo.yax_min(i)),pd.c_grid,pd.dl_grid);
