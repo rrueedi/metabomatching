@@ -29,7 +29,7 @@ for i = 1:length(dirs_source)
         ps = fun_pshuffle_score(ps);
     end
     fprintf(' done\n--- writing scores ----------------');
-    function_write_scores(ps);
+    fun_write_scores(ps);
     save(fullfile(dir_source,'ps.mat'),'ps');
     fprintf(' done\n--- writing svg -------------------');
     vis_metabomatching(dir_source);

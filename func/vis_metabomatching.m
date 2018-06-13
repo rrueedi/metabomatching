@@ -1,6 +1,6 @@
-%function ps=vis_metabomatching(dir_source)
+function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
-dir_source=ps.param.dir_source;
+%dir_source=ps.param.dir_source;
 ts.howto = false;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
@@ -23,13 +23,13 @@ unicodeRep={ ...
     'delta','&#948;';...
     'epsilon','&#949;';...
     'omega','&#969;'};...;
-%% ##### FILES ######
+    %% ##### FILES ######
 fn_parameters  = fullfile(dir_source,'parameters.out.tsv');
 fn_metabolites = fullfile(dir_source,'metdb.mat');
 fn_description = fullfile(dir_source,'description.tsv');
 fn_control     = fullfile(dir_source,'cascontrol.tsv');
 %% ##### GET PARAMETERS #####
-ps = function_load_parameters(dir_source,fn_parameters);
+ps = fun_load_parameters(dir_source,fn_parameters);
 ts.scoreadj = ps.param.n_permutation>0;
 % --- 2-compound mode implies many graphical changes
 ts.is2c = ismember(ps.param.variant,{'2c','pm2c'});
@@ -91,7 +91,7 @@ switch ps.param.plot_type
         ps.param.y_logset = [8:8:ps.param.y_gmax];
         ps.param.ps_ylabel = 'Z-score';
 end
-        
+
 if exist([dir_source,'op.csv'],'file')
     ps.op = csvread([dir_source,'op.csv']);
 end
@@ -320,25 +320,21 @@ for jPseudo=1:length(ps.tag)
         case 'p'
             pseudo.beta = ps.beta(:,jPseudo);
             pseudo.c = 1+(pseudo.beta<0);
-            pseudo.y = ps.p(:,jPseudo);
-            pseudo.x_sig = pseudo.y<param.p_significant & abs(pseudo.beta)>1e-5;
+            pseudo.y = -log10(ps.p(:,jPseudo));
+            % pseudo.x_sig = pseudo.y>=param.significant & abs(pseudo.beta)>1e-5;
         otherwise
             pseudo.z = ps.z(:,jPseudo);
             pseudo.c = 1+(pseudo.z<0);
             pseudo.y = abs(pseudo.z);
-            if ~isfield(param,'significant')
-                param.significant = max(pseudo.y);
-                disp(param.significant);
-                pseudo.x_sig = pseudo.y>=param.significant;
-            else
-                if isnan(ps.param.significant)
-                    param.significant = max(pseudo.y);
-                    disp(param.significant);
-                end
-                pseudo.x_sig = pseudo.y>=param.significant;
-                
-            end
-        end
+    end
+    if ~isfield(param,'significant')
+         param.significant = max(pseudo.y);
+         if isnan(param.significant)
+             break
+         end
+    end
+	pseudo.x_sig = pseudo.y>=param.significant;
+
     match = matches;
     match.score = matches.score(:,jPseudo);
     if ts.scoreadj
@@ -512,9 +508,9 @@ for jPseudo=1:length(ps.tag)
         end
     end
     % scale p-values
-    if all(pseudo.y<1)
-        pseudo.y = -log10(pseudo.y);
-    end
+    %     if all(pseudo.y<1)
+    %         pseudo.y = -log10(pseudo.y);
+    %     end
     pseudo.y(end+1) = param.significant; % adding p_sig here to get its val in new axis
     pseudo.y(pseudo.y>param.y_gmax)=param.y_gmax;
     sl1=pseudo.y< param.y_break_vl;
@@ -527,7 +523,7 @@ for jPseudo=1:length(ps.tag)
     majset = (0:param.y_majstep:param.y_break_vl);
     minset = setdiff((0:param.y_minstep:param.y_break_vl),majset);
     pseudo.yax_maj = ...
-    1-[param.y_break_pt*majset/param.y_break_vl,1];
+        1-[param.y_break_pt*majset/param.y_break_vl,1];
     pseudo.yax_maj_vl = [majset,param.y_gmax];
     pseudo.yax_min = [...
         param.y_break_pt*minset/param.y_break_vl,...
@@ -946,7 +942,7 @@ for jPseudo=1:length(ps.tag)
         end
     end
     svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
-
+    
     if strcmp(param.mode,'peak')
         str='rel. h: ';
     elseif strcmp(param.mode,'multiplet');

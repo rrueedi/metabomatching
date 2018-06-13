@@ -65,7 +65,7 @@ else
         end
     end
 end
-numberFields = {'n_show','dsh','decorr_lambda','snp','p_significant','p_suggestive','n_permutation'};
+numberFields = {'n_show','dsh','decorr_lambda','snp','significant','suggestive','n_permutation'};
 fi=fopen(fullfile(ps.param.dir_source,'parameters.out.tsv'),'w');
 F=fieldnames(ps.param);
 for iField = 1:length(F)

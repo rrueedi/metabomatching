@@ -45,21 +45,21 @@ if exist(ps.param.dir_source,'dir')
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='p';
             end
-            if ~isfield(ps.param,'significant')
-                ps.param.significant=-log10(5E-8);
-            else
-                if ps.param.significant<1
-                    ps.param.significant=-log10(ps.param.significant);
-                end
-            end
+%             if ~isfield(ps.param,'significant')
+%                 ps.param.significant=-log10(5E-8);
+%             else
+%                 if ps.param.significant<1
+%                     ps.param.significant=-log10(ps.param.significant);
+%                 end
+%             end
         elseif ismember('isa',fieldnames(ps)); 
             ps.param.pstype='isa';
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';
             end
-            if ~isfield(ps.param,'significant')
-                ps.param.significant=7;
-            end
+%             if ~isfield(ps.param,'significant')
+%                 ps.param.significant=7;
+%             end
         elseif ismember('cr',fieldnames(ps));
             ps.param.pstype='correlation';
             if ~isfield(ps.param,'plot_type')

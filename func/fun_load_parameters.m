@@ -53,7 +53,13 @@ if isfield(ps.param,'p_suggestive')
 end
 if isfield(ps.param,'p_significant')
   ps.param.significant = ps.param.p_significant;
+  % warning('The parameter ''p_significant'' has been replaced by ''significant''.');
   ps.param = rmfield(ps.param,'p_significant');
+end
+if isfield(ps.param,'significant');
+    if ps.param.significant<1
+        ps.param.significant=-log10(ps.param.significant);
+    end
 end
 %
 %
