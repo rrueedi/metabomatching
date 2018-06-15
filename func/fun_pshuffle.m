@@ -6,13 +6,13 @@ nf = length(ps.shift);
 ns = length(ps.tag);
 np = ps.param.n_permutation;
 
-% deep parameters
+% Deep parameters
 d_hole = 0.3;
 d_cut = 0.04;
 ts_smooth = 0;
 
+% Initialize 
 s = ps.shift;
-
 ps.zperm = NaN(nf,np,ns);
 
 % identify holes
@@ -77,5 +77,5 @@ for js = 1:ns
     end
     ps.icut{js}=ix_cut;
 end
-
+vis_permcut(ps);
 

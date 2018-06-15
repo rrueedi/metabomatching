@@ -1,4 +1,5 @@
 clear all;
+global file_id
 funcdir=getenv('DR_METABOMATCHING');
 if ~isempty(funcdir)
     addpath(fullfile(funcdir,'func'));
@@ -22,7 +23,7 @@ for i = 1:length(dirs_source)
     fprintf(' done\n--- building transition matrix ----');
     ps = function_build_mim(ps);    
     fprintf(' done\n--- metabomatching ----------------');
-    ps = function_metabomatching_core(ps);
+    ps = fun_metabomatching_core(ps);
     if ps.param.n_permutation>0
         fprintf(' done\n--- permutation -------------------');
         ps = fun_pshuffle(ps);

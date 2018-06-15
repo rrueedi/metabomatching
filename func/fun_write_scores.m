@@ -1,4 +1,4 @@
-function function_write_scores(ps)
+function fun_write_scores(ps)
 % FUNCTION_WRITE_SCORES  Write metabomatching scores to file
 
 if isfield(ps.param,'multi')
