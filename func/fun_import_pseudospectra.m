@@ -12,7 +12,7 @@ if exist(ps.param.dir_source,'dir')
             dsfni = fullfile(ps.param.dir_source,fn(i).name);            
             ts = func_readtable(dsfni);
 % a "/" indicates that the pseudospectrum.tsv file contains 
-% multiple pseudospectra; the header is then of the form "tag/variable"            
+% multiple pseudospectra; the header is then of the form "variable/tag"            
             if ~ismember('/',[ts.lb{:}])               
                 ps.tag{i,1} = strrep(fn(i).name,'.pseudospectrum.tsv','');
                 for i_field=1:length(ts.lb)
@@ -65,7 +65,12 @@ if exist(ps.param.dir_source,'dir')
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';
             end        
-        else
+        elseif ismember('z',fieldnames(ps));
+            ps.param.pstype='correlation';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='z';
+            end        
+        else          
             error('metabomatching:noTYPE','Couldn''t identify the pseudospectrum type.');
         end        
     else
