@@ -209,6 +209,34 @@ if isfield(ps.param,'multi')
         matches.score(:,ix)=pr{2*nVar+i};
     end
     fclose(fi);
+    if ts.scoreadj
+        fi = fopen(fullfile(dir_source,strrep(ps.param.multi,'pseudospectrum','scoreadj')));
+        if ts.is2c
+            fmt_met_lb = '%s%s%s%s';
+            fmt_met_pr = '%s%f%s%f';
+            nVar = 2;
+        else
+            fmt_met_lb = '%s%s';
+            fmt_met_pr = '%s%f';
+            nVar = 1;
+        end
+        lb = textscan(fi,[fmt_met_lb,repmat('%s',1,length(ps.tag))],1,'delimiter','\t');
+        pr = textscan(fi,[fmt_met_pr,repmat('%f',1,length(ps.tag))],  'delimiter','\t');
+        for J = 1:nVar
+            matches.cas(:,J)=pr{(J-1)*2+1};
+            matches.sid(:,J)=pr{(J-1)*2+2};
+            [a,b] = ismember(matches.sid(:,J),metdb.sid);
+            matches.name(a,J) = metdb.name(b(a));
+            matches.casnum(a,J) = metdb.casnum(b(a));
+        end
+        for i = 1:length(ps.tag)
+            xx = regexp(lb{2*nVar+i},'/','split');
+            tag = xx{1}{2};
+            ix = strcmpi(ps.tag,tag);
+            matches.scoreadj(:,ix)=pr{2*nVar+i};
+        end
+        fclose(fi);
+    end
 else
     for i = 1:length(ps.tag)
         fi = fopen(fullfile(dir_source,[ps.tag{i},'.score.tsv']));
@@ -328,13 +356,13 @@ for jPseudo=1:length(ps.tag)
             pseudo.y = abs(pseudo.z);
     end
     if ~isfield(param,'significant')
-         param.significant = max(pseudo.y);
-         if isnan(param.significant)
-             break
-         end
+        param.significant = max(pseudo.y);
+        if isnan(param.significant)
+            break
+        end
     end
-	pseudo.x_sig = pseudo.y>=param.significant;
-
+    pseudo.x_sig = pseudo.y>=param.significant;
+    
     match = matches;
     match.score = matches.score(:,jPseudo);
     if ts.scoreadj

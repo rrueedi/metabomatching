@@ -66,7 +66,7 @@ if exist(ps.param.dir_source,'dir')
                 ps.param.plot_type='z';
             end        
         elseif ismember('z',fieldnames(ps));
-            ps.param.pstype='correlation';
+            ps.param.pstype='z';
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';
             end        

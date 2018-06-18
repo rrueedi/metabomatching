@@ -13,7 +13,8 @@ ts_smooth = 0;
 
 % Initialize 
 s = ps.shift;
-ps.zperm = NaN(nf,np,ns);
+ps.scoreadj = NaN*ps.score;
+% ps.zperm = NaN(nf,np,ns);
 
 % identify holes
 % holes are common to all pseudospectra
@@ -21,6 +22,7 @@ d = s(2:end)-s(1:(end-1));
 ix_hole = find( d>d_hole );
 
 for js = 1:ns
+    zperm = NaN(nf,np);
     g = ps.z(:,js);
     if ts_smooth
         g = g;
@@ -71,11 +73,23 @@ for js = 1:ns
         for jc = 1:nc
             sec = find(qq(:,1)==perm(jc));
             nnc = length(sec);
-            ps.zperm((mm+1):(mm+nnc),jp,js) = ps.z(sec,js);
+            zperm((mm+1):(mm+nnc),jp) = ps.z(sec,js);
             mm=mm+nnc;
         end
     end
     ps.icut{js}=ix_cut;
+    
+    permps = ps;
+    permps.z = zperm;
+    permps = fun_metabomatching_core(permps);
+    
+    opi = permps.score;
+    opi(~isfinite(opi))=0;
+    opi = sort(opi,1,'descend');
+    ps.permscore(:,js)=max(opi,[],1);
+    tm = sum(repmat(ps.score(:,js),1,np)<repmat(ps.permscore(:,js)',nm,1),2);
+    ps.scoreadj(:,js)=abs(log10((1+tm)/(1+np)));
 end
-vis_permcut(ps);
+
+% vis_permcut(ps);
 

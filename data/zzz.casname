@@ -125,7 +125,7 @@
 87-89-8	myoinositol
 1811-31-0	N-acetylgalactosamine
 70-26-8	ornithine
-7512-17-6	N-acetyl-d-glucosamine
+7512-17-6	N-acetyl-D-glucosamine
 51-41-2	norepinephrine
 53-59-8	nADP
 57-10-3	palmitate
@@ -459,7 +459,7 @@
 1096-38-4	16-dehydroprogesterone
 485-84-7	adenosine phosphosulfate
 4289-98-9	N-formyl-L-methionine
-121-69-7	n,n-dimethylaniline
+121-69-7	N,N-dimethylaniline
 902-04-5	2'-deoxyguanosine 5'-monophosphate
 486-56-6	cotinine
 636-58-8	gamma-glutamylcysteine
@@ -596,7 +596,7 @@
 96-26-4	dihydroxyacetone
 7423-93-0	3-chlorotyrosine
 1076-22-8	3-methylxanthine
-68-12-2	n,n-dimethylformamide
+68-12-2	N,N-dimethylformamide
 58-55-9	theophylline
 616-91-1	acetylcysteine
 58-27-5	menadione
@@ -691,7 +691,7 @@
 508-02-1	oleanolate
 506-37-6	nervonate
 545-46-0	uvaol
-6384-92-5	N-methyl-d-aspartate
+6384-92-5	N-methyl-D-aspartate
 16555-77-4	alpha-hydroxyhippurate
 100-21-0	terephthalate
 123-31-9	hydroquinone
@@ -752,7 +752,7 @@
 771-50-6	indole-3-carboxylate
 15763-06-1	1-methyladenosine
 71324-20-4	3-methoxy-4-hydroxyphenylglycol sulfate
-492-62-6	alpha-d-glucose
+492-62-6	alpha-D-glucose
 5988-19-2	(S)-dihydroorotate
 2216-51-5	menthol
 660-88-8	5-aminopentanoate
@@ -849,7 +849,7 @@ BMRB-0006981	(S)-(-)-perillate
 96-31-1	1,3-dimethylurea
 504-63-2	1,3-propanediol
 637-88-7	1,4-cyclohexanedione
-6860-47-5	1,4-d-xylobiose
+6860-47-5	1,4-D-xylobiose
 31519-22-9	1,4-dihydroxy-2-naphthanoate
 BMRB-0007281	1-amino-1-cyclohexanecarboxylate
 78-96-6	1-amino-2-propanol
@@ -865,7 +865,7 @@ BMRB-0006391	1-methylnicotinamide
 BMRB-0007121	2,3-dideoxycytidine
 75853-18-8	2,3-difluorobenzyl alcohol
 BMRB-0010311	2,3-dihydro-2-oxofuran-5-acetate
-BMRB-0009341	2,3-diphospho-d-glycerate
+BMRB-0009341	2,3-diphospho-D-glycerate
 93-76-5	2,4,5-trichlorophenoxyacetate
 88-06-2	2,4,6-trichlorophenol
 50-84-0	2,4-dichlorobenzoate
@@ -952,7 +952,7 @@ BMRB-0006211	3-pyridine aldoxime
 566-65-4	5-alpha-pregnane-3,20-dione(allo)
 54-16-0	5-hydroxyindole-3-acetate
 3471-31-6	5-methoxy-3-indoleacetate
-28052-84-8	5-methoxy-dl-tryptophan
+28052-84-8	5-methoxy-DL-tryptophan
 484-20-8	5-methoxypsoralen
 554-01-8	5-methylcytosine
 BMRB-0007591	5-methyluridine
@@ -969,14 +969,14 @@ BMRB-0007591	5-methyluridine
 2478-38-8	acetosyringone
 498-02-2	acetovanillone
 590-54-5	acetyl phosphate
-14992-62-2	acetyl-l-carnitine
+14992-62-2	acetyl-L-carnitine
 84-21-9	adenosine-3-monophosphate
 382-45-6	adrenosterone
 306-60-5	agmatine
 1948-31-8	ala-ala
 302-72-7	alanine
 68579-60-2	alpha-methylamino-methyl-benzyl alcohol
-2255-14-3	alpha-d-galactose 1-phosphate
+2255-14-3	alpha-D-galactose 1-phosphate
 10139-18-1	glucose 1,6-bisphosphate
 62-46-4	alpha-lipoate
 1686-14-2	alpha-pinene-oxide
@@ -1020,30 +1020,30 @@ BMRB-0005121	cortexolone
 108-93-0	cyclohexanol
 108-91-8	cyclohexylamine
 60-23-1	cysteamine
-BMRB-0010231	d-+-glucuronate g-lactone
-3615-56-3	d-+-sorbose
-BMRB-0000071	d-(-)-3-phosphoglycerate
-2595-97-3	d-allose
-1783-96-6	d-aspartate
-461-06-3	d-carnitine
-533-48-2	d-desthiobiotin
-15978-08-2	d-fructose 1-phosphate
-79082-92-1	d-fructose 2,6-bisphosphate
-2782-07-2	d-galactono-1,4-lactone
-9046-38-2	d-galacturonate
-6165-14-6	d-glucosaminate
-BMRB-0000161	d-glucose 6-phosphate
-528-16-5	d-glucuronate
-367-47-5	d-glyceraldehyde
-348-67-4	d-methionine
-348-66-3	d-ornithine
-81-13-0	d-panthenol
-523-92-2	d-pinitol
-551-68-8	d-psicose
-87-73-0	d-saccharate
-BMRB-0008501	d-sphingosine
-526-91-0	d-xylonate
-2793-06-8	dadp
+BMRB-0010231	D-+-glucuronate g-lactone
+3615-56-3	D-+-sorbose
+BMRB-0000071	D-(-)-3-phosphoglycerate
+2595-97-3	D-allose
+1783-96-6	D-aspartate
+461-06-3	D-carnitine
+533-48-2	D-desthiobiotin
+15978-08-2	D-fructose 1-phosphate
+79082-92-1	D-fructose 2,6-bisphosphate
+2782-07-2	D-galactono-1,4-lactone
+9046-38-2	D-galacturonate
+6165-14-6	D-glucosaminate
+BMRB-0000161	D-glucose 6-phosphate
+528-16-5	D-glucuronate
+367-47-5	D-glyceraldehyde
+348-67-4	D-methionine
+348-66-3	D-ornithine
+81-13-0	D-panthenol
+523-92-2	D-pinitol
+551-68-8	D-psicose
+87-73-0	D-saccharate
+BMRB-0008501	D-sphingosine
+526-91-0	D-xylonate
+2793-06-8	dADP
 156-74-1	decamethonium
 119-13-1	delta-tocopherol
 132-64-9	dibenzofuran
@@ -1053,10 +1053,10 @@ BMRB-0005861	dihydro-sinapyl alcohol
 119-84-6	dihydrocoumarin
 10041-19-7	dioctyl sulfosuccinate
 BMRB-0007211	diphenylacetate
-583-93-7	dl-alpha,epsilon-diaminopimelate
+583-93-7	DL-alpha,epsilon-diaminopimelate
 6667-60-3	2-amino-3-methyl-succinate
 51-61-6	dopamine
-BMRB-0007951	dss
+BMRB-0007951	DSS
 106-89-8	epichlorohydrin
 105-60-2	epsilon-caprolactam
 502-44-3	epsilon-caprolactone
@@ -1096,7 +1096,7 @@ BMRB-0008291	iptg
 27025-41-8	L(-)-glutathione, oxidized
 26811-96-1	L-+-lactate
 BMRB-0002131	L-+-arabinose
-2319-57-5	l-(-)-threitol
+2319-57-5	L-(-)-threitol
 32462-30-9	L-4-hydroxyphenylglycine
 BMRB-0010281	L-alpha-phosphatidyl-DL-glycerol
 3054-36-2	L-arginine L-glutamate
@@ -1111,9 +1111,9 @@ BMRB-0004481	L-histidinol
 34236-06-1	L-methionine methylsulfonium iodide
 14641-93-1	lactose
 BMRB-0006521	lactulose
-620-23-5	m-tolualdehyde
+620-23-5	M-tolualdehyde
 99-04-7	m-toluate
-108-38-3	m-xylene
+108-38-3	M-xylene
 557-24-4	maleamate
 6915-15-7	malate
 BMRB-0007871	mes
@@ -1128,21 +1128,21 @@ BMRB-0005511	methyl jasmonate
 BMRB-0007881	mops
 488-55-1	muco-inositol
 6712-78-3	myrtenol
-6205-08-9	n(alpha)-acetyl-dl-ornithine
-26239-55-4	n-(2-acetamido)iminodiacetate
-BMRB-0007231	n-(2-furoyl)glycine methyl ester
-BMRB-0008381	n-(3-indolylacetyl)-dl-aspartate
-57105-39-2	n-(3-indolylacetyl)-l-alanine
-102029-88-9	N-acetyl-d-glucosamine 6-phosphate
-10172-89-1	N-acetyl-d-phenyl alanine
+6205-08-9	N(alpha)-acetyl-dl-ornithine
+26239-55-4	N-(2-acetamido)iminodiacetate
+BMRB-0007231	N-(2-furoyl)glycine methyl ester
+BMRB-0008381	N-(3-indolylacetyl)-dl-aspartate
+57105-39-2	N-(3-indolylacetyl)-l-alanine
+102029-88-9	N-acetyl-D-glucosamine 6-phosphate
+10172-89-1	N-acetyl-D-phenyl alanine
 2497-02-1	N-acetyl-histidine
-97-69-8	N-acetyl-l-alanine
+97-69-8	N-acetyl-L-alanine
 2490-97-3	N-acetyl-l-glutamineate
-BMRB-0003761	n-carbamyl-l-glutamate
-766-93-8	n-cyclohexylformamide
-100-88-9	n-cyclohexylsulfamate
-4226-18-0	n-methyl-l-aspartate
-598-50-5	n-methylurea
+BMRB-0003761	N-carbamyl-L-glutamate
+766-93-8	N-cyclohexylformamide
+100-88-9	N-cyclohexylsulfamate
+4226-18-0	N-methyl-L-aspartate
+598-50-5	N-methylurea
 BMRB-0000544	nadh
 53-57-6	nadph
 59-99-4	neostigmine
@@ -1153,8 +1153,8 @@ BMRB-0007081	nicotinurate
 BMRB-0007641	nonadecane
 BMRB-0006531	o,o-diethyl thiophosphate
 348-54-9	o-fluoroaniline
-27530-80-9	o-phospho-dl-threonine
-1492-23-5	o-succinyl-l-homoserine
+27530-80-9	o-phospho-DL-threonine
+1492-23-5	o-succinyl-L-homoserine
 529-20-4	o-tolualdehyde
 118-90-1	o-toluate
 1330-20-7	o-xylene
@@ -1174,7 +1174,7 @@ BMRB-0006111	p-coumaraldehyde
 85-01-8	phenanthrene
 122-59-8	phenoxyacetate
 122-79-2	phenyl acetate
-1464-44-4	phenyl beta-d-glucoside
+1464-44-4	phenyl beta-D-glucoside
 611-73-4	phenylglyoxylate
 329-98-6	phenylmethanesulfonyl fluoride
 73-89-2	phosphoenolpyruvate

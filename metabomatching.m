@@ -27,7 +27,6 @@ for i = 1:length(dirs_source)
     if ps.param.n_permutation>0
         fprintf(' done\n--- permutation -------------------');
         ps = fun_pshuffle(ps);
-        ps = fun_pshuffle_score(ps);
     end
     fprintf(' done\n--- writing scores ----------------');
     fun_write_scores(ps);
