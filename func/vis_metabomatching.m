@@ -183,7 +183,7 @@ end
 %% ##### GET SCORES #####
 clear matches;
 if isfield(ps.param,'multi')
-    fi = fopen(fullfile(dir_source,strrep(ps.param.multi,'pseudospectrum','scores')));
+    fi = fopen(fullfile(dir_source,strrep(ps.param.multi,'pseudospectrum','score')));
     if ts.is2c
         fmt_met_lb = '%s%s%s%s';
         fmt_met_pr = '%s%f%s%f';
@@ -211,7 +211,7 @@ if isfield(ps.param,'multi')
     fclose(fi);
 else
     for i = 1:length(ps.tag)
-        fi = fopen(fullfile(dir_source,[ps.tag{i},'.scores.tsv']));
+        fi = fopen(fullfile(dir_source,[ps.tag{i},'.score.tsv']));
         if ts.is2c
             pr = textscan(fi,'%s%f%s%f%f','delimiter','\t','headerlines',1);
             fclose(fi);
@@ -243,7 +243,7 @@ else
             nVar=1;
         end
         if ts.scoreadj
-            fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoresadj.tsv']));
+            fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoreadj.tsv']));
             pr = textscan(fi,'%s%f%f','delimiter','\t','headerlines',1);
             fclose(fi);
             if i == 1
