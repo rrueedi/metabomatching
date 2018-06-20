@@ -25,11 +25,20 @@ switch ps.param.pstype
         ps.tag(se)=[];
         ps.isa(:,se)=[];
         ps.z=zscore(ps.isa);
+    case 'pca'
+        se = find(all(ps.isa==0));
+        ps.tag(se)=[];
+        ps.isa(:,se)=[];
+        if ismember('pca',fieldnames(ps))
+            ps.z=zscore(ps.pca);
+        else
+            ps.z=zscore(ps.pc);
+        end
     case 'cr'
         se = find(all(ps.cr==0));
         ps.tag(se)=[];
         ps.cs(:,se)=[];
-        ps.z = ps.cr;
+        ps.z = atanh(ps.cr)/sqrt(ps.param.samplesize-3);
 end
 
 % handling pm cases

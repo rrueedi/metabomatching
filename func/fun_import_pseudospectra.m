@@ -57,11 +57,17 @@ if exist(ps.param.dir_source,'dir')
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';
             end
-%             if ~isfield(ps.param,'significant')
-%                 ps.param.significant=7;
-%             end
         elseif ismember('cr',fieldnames(ps));
-            ps.param.pstype='correlation';
+            if ~ismember('samplesize',fieldnames(ps.param))
+                error('metabomatching:needSS','For correlation-type pseudospectra, the sample size needs to be passed as a parameter [''samplesize''] to metabomatching.');
+            else
+                ps.param.pstype='correlation';
+                if ~isfield(ps.param,'plot_type')
+                    ps.param.plot_type='z';
+                end
+            end
+        elseif ismember('pc',fieldnames(ps)) | ismember('pca',fieldnames(ps));
+            ps.param.pstype='pca';
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';
             end        

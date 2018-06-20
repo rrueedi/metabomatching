@@ -27,6 +27,7 @@ function print_help {
 	echo "   -g, --debug              Debug mode."
 	echo "   -h, --help               Print this help message."
 	echo "   -i, --input-file         Set input file."
+	echo "   -p, --input-file-parameters	Set parameters input file."
 	echo "   -c, --correlation-file   Set correlation file."
 	echo "   -s, --output-score-file  Set score output file."
 	echo "   -S, --output-svg-file    Set SVG output file."
@@ -153,6 +154,6 @@ cd -
 
 # Move output files
 if [ -n "$IF_PSS" ] ; then
-	mv $DR_WORK/ps.study/tag.scores.tsv $OF_SCO
+	mv $DR_WORK/ps.study/tag.score.tsv $OF_SCO
 	mv $DR_WORK/ps.study/all.pdf $OF_PDF
 fi
