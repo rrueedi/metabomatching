@@ -1,8 +1,8 @@
 function ps = fun_processps(ps)
-
+global sFLD sNF
 % defining cut points when computing permutation scores requires sorted shifts.
 [~,r] = sort(ps.shift);
-sfld = {'shift','beta','se','p','z'};
+sfld = [sFLD,'shift'];
 for jd = 1:length(sfld)
     fld = sfld{jd};
     if ismember(fld,fieldnames(ps))
@@ -34,11 +34,16 @@ switch ps.param.pstype
         else
             ps.z=zscore(ps.pc);
         end
-    case 'cr'
+    case 'correlation'
         se = find(all(ps.cr==0));
         ps.tag(se)=[];
-        ps.cs(:,se)=[];
-        ps.z = atanh(ps.cr)/sqrt(ps.param.samplesize-3);
+        ps.cr(:,se)=[];
+        ps.z = atanh(ps.cr)*sqrt(ps.param.samplesize-3);
+        if isfield(ps.param,'crscale')
+            ps.z = ps.z/ps.param.crscale;
+        else
+            ps.z = zscore(ps.z);
+        end
 end
 
 % handling pm cases
@@ -48,7 +53,7 @@ if ismember(ps.param.variant,{'pm','pm1c','pm2c'})
     for jf = 1:length(F)
         f=F{jf};
         if ~ismember(f,{'param','shift'})
-            if ismember(f,{'beta','se','p','z'});
+            if ismember(f,sFLD);
                 ps.(f)=[ps.(f),ps.(f)];
             else
                 ps.(f)=[ps.(f);ps.(f)];

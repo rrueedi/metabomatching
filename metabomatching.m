@@ -1,5 +1,7 @@
 clear all;
-global file_id
+global file_id sFLD sNF
+sFLD = {'beta','se','p','z','isa','pc','pca','cr'};
+sNF = {};
 funcdir=getenv('DR_METABOMATCHING');
 if ~isempty(funcdir)
     addpath(fullfile(funcdir,'func'));

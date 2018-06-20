@@ -1,6 +1,6 @@
 function ps=vis_metabomatching(dir_source)
 % VIS_METABOMATCHING  Create SVG images for metabomatching results
-%dir_source=ps.param.dir_source;
+% dir_source=ps.param.dir_source;
 ts.howto = false;
 %% ##### COLORS #####
 colhex.blue.darkBrewer   = '#1F78B4';
@@ -16,14 +16,8 @@ colhex.purple.liteBrewer = '#DADAEB';
 colhex.gray.liteBrewer   = '#D9D9D9';
 colhex.gray.middBrewer   = '#969696';
 %% ##### UNICODE KEYS #####
-unicodeRep={ ...
-    'alpha','&#945;';...
-    'beta','&#946;';...
-    'gamma','&#947;';...
-    'delta','&#948;';...
-    'epsilon','&#949;';...
-    'omega','&#969;'};...;
-    %% ##### FILES ######
+unicodeRep={'alpha','&#945;';'beta','&#946;';'gamma','&#947;';'delta','&#948;';'epsilon','&#949;';'omega','&#969;'};
+%% ##### FILES ######
 fn_parameters  = fullfile(dir_source,'parameters.out.tsv');
 fn_metabolites = fullfile(dir_source,'metdb.mat');
 fn_description = fullfile(dir_source,'description.tsv');
