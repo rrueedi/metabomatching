@@ -11,7 +11,7 @@ if exist(ps.param.dir_source,'dir')
         end
         for i = 1:length(fn)
             dsfni = fullfile(ps.param.dir_source,fn(i).name);            
-            ts = func_readtable(dsfni);
+            ts = fun_readtable(dsfni);
 % a "/" indicates that the pseudospectrum.tsv file contains 
 % multiple pseudospectra; the header is then of the form "variable/tag"            
             if ~ismember('/',[ts.lb{:}])               
@@ -60,14 +60,20 @@ if exist(ps.param.dir_source,'dir')
             end
         elseif ismember('cr',fieldnames(ps));
             if ~ismember('samplesize',fieldnames(ps.param))
-                error('metabomatching:needSS','For correlation-type pseudospectra, the sample size needs to be passed as a parameter [''samplesize''] to metabomatching.');
-            else
-                ps.param.pstype='correlation';
-                if ~isfield(ps.param,'plot_type')
-                    ps.param.plot_type='z';
-                end
+                % warning('metabomatching:needSS','For correlation-type pseudospectra, the sample size needs to be passed as a parameter [''samplesize''] to metabomatching for proper scaling. Without the sample size, the Fisher transformed correlations are simply standardized.');
             end
-        elseif ismember('pc',fieldnames(ps)) | ismember('pca',fieldnames(ps));
+            ps.param.pstype='correlation';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='z';
+            end
+        elseif ismember('pc',fieldnames(ps))
+            ps.pca=ps.pc;
+            ps=rmfield(ps,'pc');
+            ps.param.pstype='pca';
+            if ~isfield(ps.param,'plot_type')
+                ps.param.plot_type='z';
+            end
+        elseif ismember('pca',fieldnames(ps));
             ps.param.pstype='pca';
             if ~isfield(ps.param,'plot_type')
                 ps.param.plot_type='z';

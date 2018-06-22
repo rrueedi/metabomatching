@@ -1,5 +1,5 @@
 function fun_write_scores(ps)
-% FUNCTION_WRITE_SCORES  Write metabomatching scores to file
+% FUN_WRITE_SCORES  Write metabomatching scores to file
 
 if ps.param.n_permutation>0
     sfld = {'score','scoreadj'};
@@ -66,12 +66,12 @@ else
         end
     end
 end
-numberFields = {'n_show','dsh','decorr_lambda','snp','significant','suggestive','n_permutation','crscale','samplesize'};
+global sNF
 fi=fopen(fullfile(ps.param.dir_source,'parameters.out.tsv'),'w');
 sfld=fieldnames(ps.param);
 for jfld = 1:length(sfld)
     fld=sfld{jfld};
-    if ismember(fld,numberFields)
+    if ismember(fld,sNF)
         format = '%.4g';
     else
         format = '%s';

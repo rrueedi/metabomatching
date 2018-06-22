@@ -1,4 +1,4 @@
-function ps = build_spectrum_database(ps)
+function ps = fun_build_spectrum_database(ps)
 % BUILD_SPECTRUM_DATABASE  Read spectrum database file(s)
 type = ['slo',ps.param.mode(1)];
 mmdb = ps.param.reference;

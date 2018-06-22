@@ -1,13 +1,12 @@
 clear all;
-global file_id sFLD sNF
-sFLD = {'beta','se','p','z','isa','pc','pca','cr'};
-sNF = {};
+% SET FUNCTION PATH
 funcdir=getenv('DR_METABOMATCHING');
 if ~isempty(funcdir)
     addpath(fullfile(funcdir,'func'));
 else
     addpath('func');
 end
+ini__;
 dirs = dir;
 dirs_source = {dirs(:).name};
 dirs_source = dirs_source(strncmp(dirs_source,'ps.',3));
@@ -18,12 +17,12 @@ for i = 1:length(dirs_source)
     fprintf('|   %s\n+--\n',dir_source);
     ps = fun_load_parameters(dir_source);
     fprintf('--- loading data ------------------');
-    ps = build_spectrum_database(ps);
-    ps = function_import_correlation(ps);
+    ps = fun_build_spectrum_database(ps);
+    ps = fun_import_correlation(ps);
     ps = fun_import_pseudospectra(ps);
     ps = fun_processps(ps);
     fprintf(' done\n--- building transition matrix ----');
-    ps = function_build_mim(ps);    
+    ps = fun_build_mim(ps);    
     fprintf(' done\n--- metabomatching ----------------');
     ps = fun_metabomatching_core(ps);
     if ps.param.n_permutation>0

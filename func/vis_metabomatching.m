@@ -284,6 +284,16 @@ end
 %
 % ----- figure title
 pd.fg_set={};
+%       pstype
+if strcmp(ps.param.pstype,'correlation')
+    pd.fg_set = [pd.fg_set;{'type','Correlation'}];
+elseif strcmp(ps.param.pstype,'z')
+    pd.fg_set = [pd.fg_set;{'type','Z-Score'}];
+elseif strcmp(ps.param.pstype,'isa')
+    pd.fg_set = [pd.fg_set;{'type','ISA'}];
+elseif strcmp(ps.param.pstype,'pca')
+    pd.fg_set = [pd.fg_set;{'type','PCA'}];    
+end
 %       variant
 opt_variant = {'2-compound','&#x00B1;','&#x00B1;-2-compound'};
 opt_ix = find(strcmp(ps.param.variant,{'2c','pm','pm2c'}));
@@ -315,14 +325,6 @@ elseif ps.param.decorr_lambda < 0.1
     pd.fg_set = [pd.fg_set;{'decorr',['&#x03BB; = ',num2str(ps.param.decorr_lambda,'%.2e')]}];
 elseif ps.param.decorr_lambda < 1.0
     pd.fg_set = [pd.fg_set;{'decorr',['&#x03BB; = ',num2str(ps.param.decorr_lambda,'%.2f')]}];
-end
-%       pstype
-if strcmp(ps.param.pstype,'correlation')
-    pd.fg_set = [pd.fg_set;{'type','Correlation'}];
-elseif strcmp(ps.param.pstype,'z')
-    pd.fg_set = [pd.fg_set;{'type','Z-Score'}];
-elseif strcmp(ps.param.pstype,'isa')
-    pd.fg_set = [pd.fg_set;{'type','ISA'}];
 end
 %       decorrelation requested, but no correlation file provided
 if isfield(ps.param,'correlation_missing')

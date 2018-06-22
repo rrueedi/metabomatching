@@ -1,5 +1,5 @@
-function ps = function_build_mim(ps)
-% FUNCTION_BUILD_MIM  Build metabolite match set matrix
+function ps = fun_build_mim(ps)
+% FUN_BUILD_MIM  Build metabolite match set matrix
 fn = fullfile(ps.param.dir_source,'metdb.mat');
 load(fn);
 
