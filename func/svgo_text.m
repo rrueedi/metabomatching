@@ -1,11 +1,11 @@
-function svgo_text(x,y,txt,horiz,fsize,fweight,fcolor,fstyle)
+function svgo_text(fid,x,y,txt,horiz,fsize,fweight,fcolor,fstyle)
 % SVGO_TEXT  Write SVG object: text
-global fontsize file_id
-if nargin<8; fstyle='normal';  end
-if nargin<7; fcolor='black';   end
-if nargin<6; fweight='normal'; end
-if nargin<5; fsize=fontsize;   end
-if nargin<4; horiz='middle';   end
+global fontsize 
+if nargin<9; fstyle='normal';  end
+if nargin<8; fcolor='black';   end
+if nargin<7; fweight='normal'; end
+if nargin<6; fsize=fontsize;   end
+if nargin<5; horiz='middle';   end
 
 str = 'text ';
 if round(x)==x && round(y)==y
@@ -19,4 +19,4 @@ if ~strcmp(fweight,'normal'); str = [str,sprintf(' font-weight="%s"',fweight)]; 
 if ~strcmp(fstyle, 'normal'); str = [str,sprintf(' font-style="%s"' ,fstyle )]; end
 if ~strcmp(fcolor, 'black' ); str = [str,sprintf(' fill="%s"'       ,fcolor )]; end
 if ~strcmp(horiz,  's'     ); str = [str,sprintf(' text-anchor="%s"',horiz  )]; end
-fprintf(file_id,'<%s>%s</text>\n',str,txt);
+fprintf(fid,'<%s>%s</text>\n',str,txt);

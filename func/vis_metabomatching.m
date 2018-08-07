@@ -668,14 +668,14 @@ for jPseudo=1:length(ps.tag)
     add0 = @(str) ['<tspan fill="white">0</tspan>',str];
     
     %
-    global file_id fontsize
+    global fontsize
     if ts.howto
-        file_id = fopen(fullfile(param.dir_source,'f1.svg'),'w');
+        FID = fopen(fullfile(param.dir_source,'f1.svg'),'w');
     else
-        file_id = fopen(fullfile(param.dir_source,[param.tag,'.svg']),'w');
+        FID = fopen(fullfile(param.dir_source,[param.tag,'.svg']),'w');
     end
     fontsize = 10;
-    fp = @(x) fprintf(file_id,[x,'\n']);
+    fp = @(x) fprintf(FID,[x,'\n']);
     ggo = @(x) fp(['<g transform="translate(',num2str(x(1),'%03d'),',',num2str(x(2),'%03d'),')">']);
     %
     
@@ -683,35 +683,35 @@ for jPseudo=1:length(ps.tag)
     fp(['<svg xmlns="http://www.w3.org/2000/svg" ' ...
         'width="',ns(pd.size(1)),'mm" height="',ns(pd.size(2)),'mm" ',...
         'viewBox="0 0 ',ns(pd.size(1)),' ',ns(pd.size(2)),'">']);
-    svgo_rect([0,pd.size(1)],[0,pd.size(2)],'#ffffff');
+    svgo_rect(FID,[0,pd.size(1)],[0,pd.size(2)],'#ffffff');
     % ##### TITLE GROUP #####
     if ts.show_title
         ggo(pd.o_fig_title);
         if ts.howto
-            svgo_rect([-2,pd.s_fig_title(1)*.86],[-2,pd.s_fig_title(2)*.61],'#ffffff','#e31a1c');
-            svgo_text_c(pd.s_fig_title(1)*.86+2,mean([-2,pd.s_fig_title(2)*.61])+3,'A','howto','start');
+            svgo_rect(FID,[-2,pd.s_fig_title(1)*.86],[-2,pd.s_fig_title(2)*.61],'#ffffff','#e31a1c');
+            svgo_text_c(FID,pd.s_fig_title(1)*.86+2,mean([-2,pd.s_fig_title(2)*.61])+3,'A','howto','start');
         end
-        svgo_text_c(0,pd.d_text_hght,'Metabomatching Settings','heading','s');
+        svgo_text_c(FID,0,pd.d_text_hght,'Metabomatching Settings','heading','s');
         for j = 1:size(pd.fg_set,1)
-            svgo_text_c( 0,pd.o_pseudo_boxxx(2)-1+(j-1)*pd.d_text_line,pd.fg_set{j,1},'normal','s');
-            svgo_text_c(52,pd.o_pseudo_boxxx(2)-1+(j-1)*pd.d_text_line,pd.fg_set{j,2},'normal','s');
+            svgo_text_c(FID, 0,pd.o_pseudo_boxxx(2)-1+(j-1)*pd.d_text_line,pd.fg_set{j,1},'normal','s');
+            svgo_text_c(FID,52,pd.o_pseudo_boxxx(2)-1+(j-1)*pd.d_text_line,pd.fg_set{j,2},'normal','s');
         end
         fp('</g>');
     end
     % ##### PSEUDOSPECTRUM TITLE GROUP #####
     ggo(pd.o_pseudo_title);
     if ts.howto
-        svgo_rect([-4,sh2x(5.35)],[-2,pd.s_pseudo_title(2)],'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(5.35)+2,mean([-2,pd.s_pseudo_title(2)])+3,'B','howto','start');
+        svgo_rect(FID,[-4,sh2x(5.35)],[-2,pd.s_pseudo_title(2)],'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(5.35)+2,mean([-2,pd.s_pseudo_title(2)])+3,'B','howto','start');
     end
     if ismember(['psa_',ps.param.deep.tag{jPseudo}],fieldnames(ps.param.deep))
         if strcmp(ps.param.deep.(['psa_',ps.param.deep.tag{jPseudo}]),'right')
-            svgo_text_c(pd.s_pseudo_title(1),pd.d_text_hght,pd.fg_pseudo_title,'heading','end');
+            svgo_text_c(FID,pd.s_pseudo_title(1),pd.d_text_hght,pd.fg_pseudo_title,'heading','end');
         else
-            svgo_text_c(0,pd.d_text_hght,pd.fg_pseudo_title,'heading','start');
+            svgo_text_c(FID,0,pd.d_text_hght,pd.fg_pseudo_title,'heading','start');
         end
     else
-        svgo_text_c(0,pd.d_text_hght,pd.ssTitlePseudo,'heading','start');
+        svgo_text_c(FID,0,pd.d_text_hght,pd.ssTitlePseudo,'heading','start');
     end
     fp('</g>');
     %
@@ -719,29 +719,29 @@ for jPseudo=1:length(ps.tag)
     % ##### PSEUDOSPECTRUM GROUP #####
     ggo(pd.o_pseudo_boxxx);
     if ts.howto
-        svgo_rect([sh2x(3.4),sh2x(0.9)],[1,-3]*pd.d_text_hght,'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(0.9)+2,mean([1,-3]*pd.d_text_hght)+3,'C','howto','start');
-        svgo_rect([sh2x(9.8),sh2x(10.9)],[-6,pd.s_pseudo_boxxx(2)+6],'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(10.9),pd.s_pseudo_boxxx(2)+17,'D','howto','start');
+        svgo_rect(FID,[sh2x(3.4),sh2x(0.9)],[1,-3]*pd.d_text_hght,'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(0.9)+2,mean([1,-3]*pd.d_text_hght)+3,'C','howto','start');
+        svgo_rect(FID,[sh2x(9.8),sh2x(10.9)],[-6,pd.s_pseudo_boxxx(2)+6],'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(10.9),pd.s_pseudo_boxxx(2)+17,'D','howto','start');
     end
     %
     % ----- grid lines
     %       vertical
     A=[0,pd.s_pseudo_boxxx(1),sh2x(1:9)];
     for ia=1:length(A)
-        svgo_line(A(ia),[0,pd.s_pseudo_boxxx(2)],pd.c_grid,pd.dl_grid);
+        svgo_line(FID,A(ia),[0,pd.s_pseudo_boxxx(2)],pd.c_grid,pd.dl_grid);
     end
     %       horizontal
     A=pd.s_pseudo_boxxx(2)*[0,(1-param.y_break_pt),1];
     for ia=1:length(A)
-        svgo_line([0,pd.s_pseudo_boxxx(1)],A(ia),pd.c_grid,pd.dl_grid);
+        svgo_line(FID,[0,pd.s_pseudo_boxxx(1)],A(ia),pd.c_grid,pd.dl_grid);
     end
-    svgo_line([0,pd.s_pseudo_boxxx(1)],(1-pseudo.ySig)*pd.s_pseudo_boxxx(2),colhex.green.liteBrewer,pd.dl_grid);
+    svgo_line(FID,[0,pd.s_pseudo_boxxx(1)],(1-pseudo.ySig)*pd.s_pseudo_boxxx(2),colhex.green.liteBrewer,pd.dl_grid);
     %
     % ----- markers for significant peaks
     Q=find(pseudo.x_sig);
     for i = 1:length(Q)
-        svgo_line(sh2x(pseudo.x(Q(i))),pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
+        svgo_line(FID,sh2x(pseudo.x(Q(i))),pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
     end
     %       labels (one per cluster)
     ypos=[];
@@ -764,40 +764,40 @@ for jPseudo=1:length(ps.tag)
         
         nnn = num2str(round(100*sh_label(i)),'%03d');
         
-        svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
+        svgo_text_c(FID,sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.5" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.5" font-size="8">',nnn(3),'</tspan>'],'legend');
     end
     % ----- pseudospectrum
     for i = 1:length(pseudo.x)
-        svgo_line(sh2x(pseudo.x(i)),[1,1-pseudo.y(i)]*pd.s_pseudo_boxxx(2),pseudo.c{i},pd.dl_pseudo);
+        svgo_line(FID,sh2x(pseudo.x(i)),[1,1-pseudo.y(i)]*pd.s_pseudo_boxxx(2),pseudo.c{i},pd.dl_pseudo);
     end
     % ----- pseudospectrum x-axis
     ggo(pd.o_pseudo_xaxis);
     if ts.howto
-        svgo_rect([sh2x(1),sh2x(0)+3.5],[17,32],'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(1)-2,pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce+1,'E','howto','end');
+        svgo_rect(FID,[sh2x(1),sh2x(0)+3.5],[17,32],'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(1)-2,pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce+1,'E','howto','end');
     end
     for i = 0:0.2:10
         if i<=pd.xRange(2) && i>=pd.xRange(1)
             if mod(i,1)<1e-4
-                svgo_line(sh2x(i),pd.d_tmaj*[-1,1],pd.c_grid,pd.dl_grid);
-                svgo_text_c(sh2x(i),pd.d1+pd.d_text_hght+pd.d_text_spce*0.75,num2str(i),'normal');
+                svgo_line(FID,sh2x(i),pd.d_tmaj*[-1,1],pd.c_grid,pd.dl_grid);
+                svgo_text_c(FID,sh2x(i),pd.d1+pd.d_text_hght+pd.d_text_spce*0.75,num2str(i),'normal');
             end
         end
     end
-    svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
+    svgo_text_c(FID,sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
     pd.ssBetaLegend = [...
         '&#946;:',...
         '<tspan dy="-0.5" fill="',colhex.orange.darkBrewer,  '">&#9632;</tspan>',...
         '<tspan dy="+0.5" dx="-0.3">&#60;0&#60;</tspan>',...
         '<tspan dy="-0.5" dx="-0.3" fill="',colhex.blue.darkBrewer,  '">&#9632;</tspan>'];
-    svgo_text_c(3+sh2x(min(pd.xRange)),pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce,pd.ssBetaLegend,'legend','end');
+    svgo_text_c(FID,3+sh2x(min(pd.xRange)),pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce,pd.ssBetaLegend,'legend','end');
     fp('</g>');
     % ----- pseudospectrum y-axis
     ggo(pd.o_pseudo_yaxis);
-    svgo_line(pd.s_pseudo_yaxis(1),[0,pd.s_pseudo_yaxis(2)],pd.c_grid,pd.dl_grid);
-    fprintf(file_id,[...
+    svgo_line(FID,pd.s_pseudo_yaxis(1),[0,pd.s_pseudo_yaxis(2)],pd.c_grid,pd.dl_grid);
+    fprintf(FID,[...
         '<text x="%f" y="%f" ',...
         'font-size="',num2str(fontsize),...
         '" font-family="Open Sans',...
@@ -806,63 +806,63 @@ for jPseudo=1:length(ps.tag)
         '">%s</text>\n'],...
         pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,270,pd.d_text_hght,pd.s_pseudo_yaxis(2)/2,param.ps_ylabel);
     for i = 1:length(pseudo.yax_maj)
-        svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmaj*[1,-1],pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i),pd.c_grid,pd.dl_grid);
-        svgo_text_c(pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,num2str(pseudo.yax_maj_vl(i)),'normal','end');
+        svgo_line(FID,pd.s_pseudo_yaxis(1)-pd.d_tmaj*[1,-1],pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i),pd.c_grid,pd.dl_grid);
+        svgo_text_c(FID,pd.s_pseudo_yaxis(1)-pd.d_tmaj,pd.s_pseudo_yaxis(2)*pseudo.yax_maj(i)+3,num2str(pseudo.yax_maj_vl(i)),'normal','end');
     end
     for i = 1:length(pseudo.yax_min)
-        svgo_line(pd.s_pseudo_yaxis(1)-pd.d_tmin*[-1,0],pd.s_pseudo_yaxis(2)*(1-pseudo.yax_min(i)),pd.c_grid,pd.dl_grid);
+        svgo_line(FID,pd.s_pseudo_yaxis(1)-pd.d_tmin*[-1,0],pd.s_pseudo_yaxis(2)*(1-pseudo.yax_min(i)),pd.c_grid,pd.dl_grid);
     end
     fp('</g>');
     fp('</g>');
     % ##### SPECTRUM TITLE GROUP #####
     ggo(pd.o_spectr_title);
-    svgo_text_c(0,pd.d_text_hght,'Candidate Metabolites','heading','start');
+    svgo_text_c(FID,0,pd.d_text_hght,'Candidate Metabolites','heading','start');
     fp('</g>');
     % ##### SPECTRUM SUBTITLE GROUP #####
     ggo(pd.o_spectr_subtt);
-    svgo_text_c(0,pd.d_text_hght,'match set','normal','s');
+    svgo_text_c(FID,0,pd.d_text_hght,'match set','normal','s');
     ggo(pd.o_spectr_headr);
     if ts.scoreadj
-        svgo_text_c(0,pd.d_text_hght,'adj','normal','s');
+        svgo_text_c(FID,0,pd.d_text_hght,'adj','normal','s');
     else
-        svgo_text_c(0,pd.d_text_hght,'rank','normal','s');
+        svgo_text_c(FID,0,pd.d_text_hght,'rank','normal','s');
     end
     fp('</g>');
     fp('</g>');
     % ##### SPECTRUM GROUP #####
     ggo(pd.o_spectr_boxxx);
     if ts.howto
-        svgo_rect(sh2x([1.1,2.75]),pd.y_spectr_lines(2)-pd.d_text_line/2+pd.d_text_hght*6/9*[-1,1],'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(2.75)-2,pd.y_spectr_lines(2)-2,'G','howto','end');
-        % svgo_rect([-pd.s_pseudo_yaxis(1),-16]-2,pd.y_spectr_lines(1)-pd.d_text_line/2+pd.d_text_hght*6/9*[-1,1],'#ffffff','#e31a1c');
-        % svgo_text_c(-pd.s_pseudo_yaxis(1)-5,pd.y_spectr_lines(1)-2,'F','howto','end');
+        svgo_rect(FID,sh2x([1.1,2.75]),pd.y_spectr_lines(2)-pd.d_text_line/2+pd.d_text_hght*6/9*[-1,1],'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(2.75)-2,pd.y_spectr_lines(2)-2,'G','howto','end');
+        % svgo_rect(FID,[-pd.s_pseudo_yaxis(1),-16]-2,pd.y_spectr_lines(1)-pd.d_text_line/2+pd.d_text_hght*6/9*[-1,1],'#ffffff','#e31a1c');
+        % svgo_text_c(FID,-pd.s_pseudo_yaxis(1)-5,pd.y_spectr_lines(1)-2,'F','howto','end');
         
     end
-    svgo_line(0,[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
-    svgo_line(pd.s_spectr_boxxx(1),[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
+    svgo_line(FID,0,[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
+    svgo_line(FID,pd.s_spectr_boxxx(1),[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
     Z=nshow/4;
     for i=1:(Z-1)
-        svgo_line([-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],mean(pd.y_spectr_lines([4*i,4*i+1]))-pd.d_text_line/2,pd.c_grid,pd.dl_grid);
+        svgo_line(FID,[-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],mean(pd.y_spectr_lines([4*i,4*i+1]))-pd.d_text_line/2,pd.c_grid,pd.dl_grid);
     end
-    svgo_line([-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],0,pd.c_grid,pd.dl_grid);
-    svgo_line([-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],pd.s_spectr_boxxx(2),pd.c_grid,pd.dl_grid);
+    svgo_line(FID,[-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],0,pd.c_grid,pd.dl_grid);
+    svgo_line(FID,[-pd.s_pseudo_yaxis(1),pd.s_spectr_boxxx(1)],pd.s_spectr_boxxx(2),pd.c_grid,pd.dl_grid);
     for i = 1:9
-        svgo_line(sh2x(i),[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
+        svgo_line(FID,sh2x(i),[0,pd.s_spectr_boxxx(2)],pd.c_grid,pd.dl_grid);
     end
     % ----- markers for significant peaks
     for i=1:length(sh_label)
         nnn = num2str(round(100*sh_label(i)),'%03d');
-        svgo_text_c(sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
+        svgo_text_c(FID,sh2x(sh_label(i)),-pd.d1-(ypos(i)-1)*pd.d_text_hght,[nnn(1),...
             '<tspan dy="-1" dx="-.6" font-size="8">',nnn(2),'</tspan>',...
             '<tspan dx="-.6" font-size="8">',nnn(3),'</tspan>'],'legend');
     end
     Q=find(pseudo.x_sig);
     for i = 1:length(Q)
         for j = 1:Z-1
-            svgo_line(sh2x(pseudo.x(Q(i))),mean(pd.y_spectr_lines([4*j,4*j+1]))-pd.d_text_line/2+pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
+            svgo_line(FID,sh2x(pseudo.x(Q(i))),mean(pd.y_spectr_lines([4*j,4*j+1]))-pd.d_text_line/2+pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
         end
-        svgo_line(sh2x(pseudo.x(Q(i))),pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
-        svgo_line(sh2x(pseudo.x(Q(i))),pd.s_spectr_boxxx(2)+pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
+        svgo_line(FID,sh2x(pseudo.x(Q(i))),pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
+        svgo_line(FID,sh2x(pseudo.x(Q(i))),pd.s_spectr_boxxx(2)+pd.d1*[-1,1]/2,pd.c_grid,pd.dl_grid);
     end
     % ----- spectra peak rectangles
     cols = {colhex.green.darkBrewer,colhex.green.middBrewer,colhex.green.liteBrewer;...
@@ -899,7 +899,7 @@ for jPseudo=1:length(ps.tag)
         if nVar==1; qq=0*qq; end
         [~,reo]=sort(hh,'ascend');
         for j = reo'
-            svgo_rect(sh2x([p1(j),p2(j)]),...
+            svgo_rect(FID,sh2x([p1(j),p2(j)]),...
                 pd.y_spectr_lines(i)-pd.d_text_line/2+qq(j)*pd.d_text_hght*1/9+pd.d_text_hght*(5-abs(qq(j)))/9*[-1,1],cc{j});
         end
     end
@@ -921,7 +921,7 @@ for jPseudo=1:length(ps.tag)
                 pseudo.x(Q)-p2(j)<0);
             if ~isempty(seTag)
                 for k=1:length(seTag)
-                    svgo_line(sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pd.c_mark,pd.dl_pseudo);
+                    svgo_line(FID,sh2x(pseudo.x(Q(seTag(k)))),pd.y_spectr_lines(i)-pd.d_text_line/2+pd.d_text_hght*1/3*[-1,1],pd.c_mark,pd.dl_pseudo);
                 end
             end
         end
@@ -933,7 +933,7 @@ for jPseudo=1:length(ps.tag)
     if ts.scoreadj
         for i = 1:length(pd.y_spectr_lines)
             str = num2str(spectrum.scoreadj(i),'%.1f');
-            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+            svgo_text_c(FID,0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
     else
         rankExponent=max(floor(log10(spectrum.rank)));
@@ -944,28 +944,28 @@ for jPseudo=1:length(ps.tag)
                 str=add0(str);
                 A=A+1;
             end
-            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+            svgo_text_c(FID,0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
     end
     fp('</g>');
     % ----- spectrum x-axis
     ggo(pd.o_spectr_xaxis);
     if ts.howto
-        svgo_rect([sh2x(2.9),sh2x(0)+3.5],[17,32],'#ffffff','#e31a1c');
-        svgo_text_c(sh2x(2.9)-2,pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce+1,'H','howto','end');
+        svgo_rect(FID,[sh2x(2.9),sh2x(0)+3.5],[17,32],'#ffffff','#e31a1c');
+        svgo_text_c(FID,sh2x(2.9)-2,pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce+1,'H','howto','end');
     end
     for i = 0:0.2:10
         if i<=pd.xRange(2) && i>=pd.xRange(1)
             if mod(i,1)<1e-4
-                svgo_line(sh2x(i),pd.d_tmaj*[-1,1],pd.c_grid,pd.dl_grid);
-                svgo_text_c(sh2x(i),pd.d1+pd.d_text_hght+pd.d_text_spce*0.75,num2str(i),'normal');
+                svgo_line(FID,sh2x(i),pd.d_tmaj*[-1,1],pd.c_grid,pd.dl_grid);
+                svgo_text_c(FID,sh2x(i),pd.d1+pd.d_text_hght+pd.d_text_spce*0.75,num2str(i),'normal');
             else
-                %svgo_line(sh2x(i),pd.s_pseudo_xaxis(2)-[0,pd.d1/2]);
-                %svgo_line(sh2x(i),pd.d_tmin*[-1,0]);
+                %svgo_line(FID,sh2x(i),pd.s_pseudo_xaxis(2)-[0,pd.d1/2]);
+                %svgo_line(FID,sh2x(i),pd.d_tmin*[-1,0]);
             end
         end
     end
-    svgo_text_c(sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
+    svgo_text_c(FID,sh2x(mean(pd.xRange)),pd.d1+2*pd.d_text_hght+2*pd.d_text_spce,'chemical shift [ppm]','normal');
     
     if strcmp(param.mode,'peak')
         str='rel. h: ';
@@ -996,7 +996,7 @@ for jPseudo=1:length(ps.tag)
             '<tspan dy="-0.5" dx="-0.3" fill="',colhex.green.darkBrewer,'">&#9632;</tspan>',...
             '<tspan dy="+0.5" dx="-0.3">&#60;1</tspan>'];
     end
-    svgo_text_c(3+sh2x(min(pd.xRange)),pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce,pd.ssHeightLegend,'legend','end');
+    svgo_text_c(FID,3+sh2x(min(pd.xRange)),pd.d1+1.9*pd.d_text_hght+2*pd.d_text_spce,pd.ssHeightLegend,'legend','end');
     fp('</g>');
     fp('</g>');
     % ##### METABOLITE DETAILS TITLE #####
@@ -1008,11 +1008,11 @@ for jPseudo=1:length(ps.tag)
     else
         pd.xColName = pd.xColCas+12*pd.d_text_wdth;
     end
-    svgo_text_c(0,pd.d_text_hght,'score','normal','s');
+    svgo_text_c(FID,0,pd.d_text_hght,'score','normal','s');
     
     pd.xColName=pd.xColCas-8;
     if nVar==2
-        svgo_text_c(pd.xColName,pd.d_text_hght,[...
+        svgo_text_c(FID,pd.xColName,pd.d_text_hght,[...
             'name (',...
             '<tspan dy="-0.8" fill="',colhex.green.darkBrewer,'">&#9632;</tspan>',...
             '<tspan dy=" 0.8"> &#38; </tspan>',...
@@ -1020,21 +1020,21 @@ for jPseudo=1:length(ps.tag)
             '<tspan dy=" 0.8">)</tspan>'],...
             'normal','s');
     else
-        svgo_text_c(pd.xColName,pd.d_text_hght,'name','normal','s');
+        svgo_text_c(FID,pd.xColName,pd.d_text_hght,'name','normal','s');
     end
     fp('</g>');
     % ##### METABOLITE DETAILS #####
     ggo(pd.o_metabo_boxxx);
     if ts.howto
-        svgo_rect([29,130],pd.y_spectr_lines(1)-pd.d_text_line/2+pd.d_text_hght*7/9*[-1,1],'#ffffff','#e31a1c');
-        svgo_text_c(132,pd.y_spectr_lines(1)-2,'F','howto','s');
+        svgo_rect(FID,[29,130],pd.y_spectr_lines(1)-pd.d_text_line/2+pd.d_text_hght*7/9*[-1,1],'#ffffff','#e31a1c');
+        svgo_text_c(FID,132,pd.y_spectr_lines(1)-2,'F','howto','s');
     end
     Z=nshow/4;
     for i=1:(Z-1)
-        svgo_line([0,pd.s_metabo_boxxx(1)+20],mean(pd.y_spectr_lines([4*i,4*i+1]))-pd.d_text_line/2,pd.c_grid,pd.dl_grid);
+        svgo_line(FID,[0,pd.s_metabo_boxxx(1)+20],mean(pd.y_spectr_lines([4*i,4*i+1]))-pd.d_text_line/2,pd.c_grid,pd.dl_grid);
     end
-    svgo_line([0,pd.s_metabo_boxxx(1)+20],0,pd.c_grid,pd.dl_grid);
-    svgo_line([0,pd.s_metabo_boxxx(1)+20],pd.s_spectr_boxxx(2),pd.c_grid,pd.dl_grid);
+    svgo_line(FID,[0,pd.s_metabo_boxxx(1)+20],0,pd.c_grid,pd.dl_grid);
+    svgo_line(FID,[0,pd.s_metabo_boxxx(1)+20],pd.s_spectr_boxxx(2),pd.c_grid,pd.dl_grid);
     
     casExponent=0;
     for i = 1:nshow
@@ -1063,12 +1063,12 @@ for jPseudo=1:length(ps.tag)
                 fprintf('.. %s - sco %.1f - % op %.1\n',ps.tag{jPseudo},spectrum.score(i),ps.op(jPseudo));
             end
             if spectrum.score(i)>ps.op(jPseudo)
-                svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'permsig','s');
+                svgo_text_c(FID,0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'permsig','s');
             else
-                svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+                svgo_text_c(FID,0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
             end
         else
-            svgo_text_c(0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+            svgo_text_c(FID,0,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
         if ts.is2c
             if length(spectrum.met_name{i,1})<14
@@ -1121,9 +1121,9 @@ for jPseudo=1:length(ps.tag)
             end
         end
         if spectrum.ctrl(i)==1
-            svgo_text_c(pd.xColName,pd.y_spectr_lines(i)-pd.d_text_midd,[str,'<tspan dy="-2.5" font-size="7">#</tspan>'],'control','s');
+            svgo_text_c(FID,pd.xColName,pd.y_spectr_lines(i)-pd.d_text_midd,[str,'<tspan dy="-2.5" font-size="7">#</tspan>'],'control','s');
         else
-            svgo_text_c(pd.xColName,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
+            svgo_text_c(FID,pd.xColName,pd.y_spectr_lines(i)-pd.d_text_midd,str,'normal','s');
         end
     end
     
@@ -1137,27 +1137,27 @@ for jPseudo=1:length(ps.tag)
         ggo([0,pd.size(2)]);
         pd.size(2)=pd.size(2)+2+nl*12+4;
         newSize=ns(pd.size(2));
-        svgo_rect([0,pd.size(1)],[0,pd.size(2)],'#ffffff');
-        svgo_line([0,pd.size(1)],1,pd.c_grid,pd.dl_grid);
+        svgo_rect(FID,[0,pd.size(1)],[0,pd.size(2)],'#ffffff');
+        svgo_line(FID,[0,pd.size(1)],1,pd.c_grid,pd.dl_grid);
         for i = 1:length(a)
             lv = floor((i-1)/3);
             yv = pd.size(1)*(1/6+((i-3*lv)-1)*1/3);
-            svgo_text_c(yv,2+(1+lv)*pd.d_text_line-1,[lgd{i,1},': ',lgd{i,2}],'normal');
+            svgo_text_c(FID,yv,2+(1+lv)*pd.d_text_line-1,[lgd{i,1},': ',lgd{i,2}],'normal');
         end
         fp('</g>');
         fp('</svg>');
         fclose('all');
-        file_id = fopen(fullfile(param.dir_source,[param.tag,'.svg']));
-        Q=textscan(file_id,'%s','delimiter','?');
+        FID = fopen(fullfile(param.dir_source,[param.tag,'.svg']));
+        Q=textscan(FID,'%s','delimiter','?');
         Q=Q{1};
         Q{1}=strrep(Q{1},oldSize,newSize);
         Q{2}=strrep(Q{2},oldSize,newSize);
-        fclose(file_id);
-        file_id = fopen(fullfile(param.dir_source,[param.tag,'.svg']),'w');
-        fprintf(file_id,'%s\n',Q{:});
-        fclose(file_id);
+        fclose(FID);
+        FID = fopen(fullfile(param.dir_source,[param.tag,'.svg']),'w');
+        fprintf(FID,'%s\n',Q{:});
+        fclose(FID);
     else
         fp('</svg>');
-        fclose(file_id);
+        fclose(FID);
     end
 end

@@ -1,10 +1,9 @@
-function svgo_rect(x,y,fill,edge,width)
+function svgo_rect(fid,x,y,fill,edge,width)
 % SVGO_RECT  Write SVG object: rectangle
-if nargin<5; width=1; end
-if nargin<4; edge='notprov'; end
-if nargin<3; fill='#000000'; end
+if nargin<6; width=1; end
+if nargin<5; edge='notprov'; end
+if nargin<4; fill='#000000'; end
 if strcmp(edge,'notprov'); edge=fill; end
-global file_id
 if all(round([x,y])==[x,y])
     ff = '%03d';
 else
@@ -16,7 +15,7 @@ end
 if length(y)==1
     y=[y,y];
 end
-fprintf(file_id,[ ...
+fprintf(fid,[ ...
     '<rect ',...
     'x="',ff,'" ',...
     'width="',ff,'" ',...
