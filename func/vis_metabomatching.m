@@ -235,7 +235,8 @@ else
     for i = 1:length(ps.tag)
         fi = fopen(fullfile(dir_source,[ps.tag{i},'.score.tsv']));
         if ts.is2c
-            pr = textscan(fi,'%s%f%s%f%f','delimiter','\t','headerlines',1);
+            xx = textscan(fi,'%s%s%s%s%s',1,'delimiter','\t'); % avoids using headerlines
+            pr = textscan(fi,'%s%f%s%f%f','delimiter','\t');
             fclose(fi);
             if i == 1
                 matches.cas(:,1)=pr{1};
@@ -252,7 +253,8 @@ else
             matches.score(:,i)=pr{5};
             nVar=2;
         else
-            pr = textscan(fi,'%s%f%f','delimiter','\t','headerlines',1);
+            xx = textscan(fi,'%s%s%s',1,'delimiter','\t'); % avoids using headerlines
+            pr = textscan(fi,'%s%f%f','delimiter','\t');
             fclose(fi);
             if i == 1
                 matches.cas=pr{1};
@@ -265,8 +267,9 @@ else
             nVar=1;
         end
         if ts.scoreadj
-            fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoreadj.tsv']));
-            pr = textscan(fi,'%s%f%f','delimiter','\t','headerlines',1);
+            fi = fopen(fullfile(dir_source,[ps.tag{i},'.scoreadj.tsv'])); 
+            xx = textscan(fi,'%s%s%s',1,'delimiter','\t'); % avoids using headerlines
+            pr = textscan(fi,'%s%f%f','delimiter','\t');
             fclose(fi);
             if i == 1
                 matches.cas=pr{1};

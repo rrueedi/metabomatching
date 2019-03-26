@@ -20,7 +20,9 @@ special_defaults.dsh_multiplet = 0.010;
 special_defaults.suggestive = 5;
 % /
 if exist(fn,'file');
-    pr = fun_read(fn,'%s%s');
+    fi = fopen(fn);
+    pr = textscan(fi,'%s%s','delimiter','\t');
+    fclose(fi);
     for j = 1:length(pr{1})
         field = pr{1}{j};
         value = pr{2}{j};
@@ -49,6 +51,11 @@ end
 if isfield(ps.param,'significant');
     if ps.param.significant<1
         ps.param.significant=-log10(ps.param.significant);
+    end
+end
+if isfield(ps.param,'suggestive');
+    if ps.param.suggestive<1
+        ps.param.suggestive=-log10(ps.param.suggestive);
     end
 end
 %
