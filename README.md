@@ -29,4 +29,4 @@ Metabomatching is a method that uses genetic spiking information to identify the
 - Rico Rueedi (University of Lausanne)
 
 ## Website
-- http://www.unil.ch/cbg/index.php?title=metabomatching
+- http://www2.unil.ch/cbg/index.php?title=metabomatching
